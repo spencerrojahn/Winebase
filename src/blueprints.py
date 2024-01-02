@@ -68,11 +68,11 @@ def logout():
 @tabs.route("/wines")
 @login_required
 def wines():
-    return render_template("tab-pages/wines.html", user=current_user, username=current_user.username)
+    return render_template("tab-pages/wines.html", user=current_user, username=current_user.username, tab_name="WINES")
 
 @auth.route("/cellars")
 @tabs.route("/cellars")
 @login_required
 def cellars():
-    return render_template("tab-pages/cellars.html", user=current_user, username=current_user.username)
+    return render_template("tab-pages/cellars.html", user=current_user, username=current_user.username, tab_name="CELLARS")
 

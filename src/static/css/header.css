@@ -22,17 +22,20 @@
     justify-content: space-between;
 }
 
-.tabs, a, #header-username, #header-username2 {
+.tabs, a.header, #header-username {
     font-size: 16px;
     margin: 0 10px;
     cursor: pointer;
     color: #999999;
 }
 
-a:hover {
+a.header:hover {
     color: #646464;
 }
 
+a#title-link, a#logout-link {
+    margin: 0;
+}
 
 #title-logo-header {
     display: flex;
@@ -63,13 +66,13 @@ img {
     color: #6B1D82;
 }
 
-#header-username2 {
+#logout-button {
     padding: 10px 0;
     background-color: #c0c0c0;
     border-radius: 2px;
 }
 
-#header-username2:hover {
+#logout-button:hover {
     background-color: #999999;
 }
 

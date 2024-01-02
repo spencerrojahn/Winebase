@@ -7,20 +7,51 @@
 
 
 {% block tabs %}
-<h4 class="tabs"><a href="{{ url_for('tabs.wines') }}" style="color:black">WINES</a></h4>
-<h4 class="tabs"><a href="{{ url_for('tabs.cellars') }}">CELLARS</a></h4>
+<h4 class="tabs"><a class="header" href="{{ url_for('tabs.wines') }}" style="color:black">WINES</a></h4>
+<h4 class="tabs"><a class="header" href="{{ url_for('tabs.cellars') }}">CELLARS</a></h4>
 {% endblock %}
 
 
-{% block content_title %}
-<h2>WINES</h2>
+
+{% block body_content_header %}
+<div id="body-content-header-add-account">
+    <a id="add-account" class="header" href="{{ url_for('tabs.wines') }}"><span >&#43; ADD WINE</span></a>
+</div>
 {% endblock %}
+
 
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/wines.css') }}">
 <div id="wines-container">
+    <div>
+        <!-- This is where the filters and column settings will go -->
+    </div>
     
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>John Doe</td>
+                <td>john@example.com</td>
+                <td>User</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Jane Smith</td>
+                <td>jane@example.com</td>
+                <td>Admin</td>
+            </tr>
+        </tbody>
+    </table>
+
 </div>
 
 

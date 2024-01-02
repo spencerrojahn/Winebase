@@ -1,0 +1,16 @@
+
+#body-content-header-add-account {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+}
+
+#add-account:hover {
+    color: black;
+}
+
+
+
+#wines-container {
+    padding: 5px 40px;
+}

@@ -5,3 +5,77 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    
+    # One-to-many relationship with WineEntry
+    wine_entries = db.relationship('WineEntry', back_populates='user')
+
+
+class WineDetails(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    winery_name = db.Column(db.String(255), nullable=False)         # winery name (NOT optional)
+    winery_location = db.Column(db.String(500), nullable=True)      # winery location (optional)
+    vineyard_location = db.Column(db.String(500), nullable=True)    # vinary where the grapes were grown (optional)
+    wine_name = db.Column(db.String(150), nullable=True)            # wine name (optional)
+    varietals = db.Column(db.String(255), nullable=False)           # varietal(s) (NOT optional) - can be multiple
+    vintage = db.Column(db.Integer, nullable=False)                 # vintage (NOT optional)
+    expert_rater_name = db.Column(db.String(150), nullable=True)    # expert rater name (optional)
+    expert_rating = db.Column(db.Integer, nullable=True)            # expert rating 100 point scale (optional)       
+    personal_rating = db.Column(db.Integer, nullable=True)          # personal rating 1-5 (optional)
+
+    # One-to-one relationship with WineEntry
+    wine_entry = db.relationship('WineEntry', back_populates='details', uselist=False)
+
+
+
+class WineEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)                    
+    entry_date = db.Column(db.Date, nullable=False)
+    drink_date = db.Column(db.Date, nullable=True)
+    drank = db.Column(db.Boolean, nullable=False, default=False)
+    cellar = db.Column(db.String(50), nullable=True)
+    cellar_location = db.Column(db.String(10), nullable=True)
+    purchase_price = db.Column(db.Float, nullable=True)
+    entry_description = db.Column(db.String(1000), nullable=True)
+    personal_notes = db.Column(db.String(1000), nullable=True)
+
+    
+    # Foreign key to User
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', back_populates='wine_entries')
+
+    # One-to-one relationship with WineDetails
+    details_id = db.Column(db.Integer, db.ForeignKey('wine_details.id'), unique=True, nullable=False)
+    details = db.relationship('WineDetails', back_populates='wine_entry')
+
+
+
+
+    # user = User(username='john_doe')
+
+    # # Create a wine entry with details
+    # wine_entry = WineEntry(entry_date='2023-01-01', user=user)
+    # wine_details = WineDetails(description='Red Wine Details', wine_entry=wine_entry)
+
+    # # Save to the database
+    # db.session.add(user)
+    # db.session.add(wine_entry)
+    # db.session.add(wine_details)
+    # db.session.commit()
+
+    # # Query the user and their wine entries
+    # queried_user = User.query.filter_by(username='john_doe').first()
+    # print(f"User: {queried_user.username}")
+
+    # for entry in queried_user.wine_entries:
+    #     print(f"Wine Entry Date: {entry.entry_date}, Details: {entry.details.description}")
+
+
+
+
+# sorted_entries = sorted(queried_user.wine_entries, key=lambda entry: entry.details.vintage or 0)
+
+
+# # Filter wine entries by varietals containing "char"
+#     filtered_entries = [entry for entry in queried_user.wine_entries if "char" in entry.details.varietals.lower()]
+
+

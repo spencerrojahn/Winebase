@@ -3,8 +3,8 @@
 
 /* SHARED BETWEEN EACH OF THE PAGES */
 
-/* 
-body, div, header, img, h4, h2, h3, span, button, label, input, a {
+
+/* body, div, header, img, h4, h2, h3, span, button, label, input, a {
     border-style: solid;
 } */
 
@@ -24,8 +24,15 @@ a {
     text-decoration: none;
 }
 
-#content-title {
-    font-size: 20px;
+#body-content-header {
+    display: flex;
     padding: 10px 40px;
 }
+
+#body-content-header-title {
+    font-size: 40px;
+    width: auto;
+}
+
+
 

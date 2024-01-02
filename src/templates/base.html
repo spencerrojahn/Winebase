@@ -8,13 +8,15 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/wines.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/cellars.css') }}">
         
         {% block page_title %}{% endblock %}
     </head>
     <body>
         <header id="page-header">
             <div id="left-header">
-                <a href="{{ url_for('tabs.wines') }}">
+                <a id="title-link" class="header" href="{{ url_for('tabs.wines') }}">
                     <div id="title-logo-header">
                         <span id="title-header">WINEBASE</span>
                         <img src="{{url_for('static', filename='img/winebase-logo-small.png')}}" />
@@ -29,16 +31,19 @@
             <!-- container for the drop down menu for the account information/logout, etc. -->
             <div id="right-header">
                 {% if user.is_authenticated %}
-                <h2 id="header-username"> {{ username }}</h2>
-                <div id="header-username2">
-                    <a id="logout" href="{{ url_for('auth.logout') }}">LOGOUT</a>
+                <h2 id="header-username">{{ username }}</h2>
+                <div id="logout-button">
+                    <a class="header" id="logout" href="{{ url_for('auth.logout') }}">LOGOUT</a>
                 </div>
                 {% endif %}
             </div>
         
         </header>
-        <div id="content-title">
-            {% block content_title %}{% endblock %}
+        <div id="body-content-header">
+            <!-- Will only be visible for tab pages (not login/registration pages) -->
+            <h2 id="body-content-header-title">{{ tab_name }}</h2>
+            <!-- Add some content in the header per tab page if requested -->
+            {% block body_content_header %}{% endblock %}
         </div>
 
         {% block content %}{% endblock %}
