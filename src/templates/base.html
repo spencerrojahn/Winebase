@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+        
+        {% block page_title %}{% endblock %}
+    </head>
+    <body>
+        <header id="page-header">
+            <div id="left-header">
+                <a href="{{ url_for('tabs.wines') }}">
+                    <div id="title-logo-header">
+                        <span id="title-header">WINEBASE</span>
+                        <img src="{{url_for('static', filename='img/winebase-logo-small.png')}}" />
+                    </div>
+                </a>
+                
+                <div id="tabs-container">
+                    {% block tabs %}{% endblock %}
+                </div>
+            </div>
+        
+            <!-- container for the drop down menu for the account information/logout, etc. -->
+            <div id="right-header">
+                {% if user.is_authenticated %}
+                <h2 id="header-username"> {{ username }}</h2>
+                <div id="header-username2">
+                    <a id="logout" href="{{ url_for('auth.logout') }}">LOGOUT</a>
+                </div>
+                {% endif %}
+            </div>
+        
+        </header>
+        <div id="content-title">
+            {% block content_title %}{% endblock %}
+        </div>
+
+        {% block content %}{% endblock %}
+
+    </body>
+</html>

@@ -1,0 +1,72 @@
+
+#page-header {
+    color: #999999;
+    padding: 24px 25px; 
+
+}
+
+.login-register-container {
+    margin: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.form-container {
+    text-align: center;
+}
+
+h3.login-register-title {
+    font-size: 36px;
+    /* margin */
+    margin: 40px 0 20px 0;
+}
+
+h4 {
+    margin: 10px;
+    color: #646464;
+}
+
+
+.form-group {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+
+input.form-control {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    font-size: 16px;
+    margin: 5px 0;
+    padding: 8px;
+    width: 85%;
+    border-radius: 5px;
+    font-family: "Exo 2";
+    border: 2px solid #999999; 
+    opacity: 0.7;
+}
+
+input.form-control:hover {
+    border-color: #646464;
+}
+
+input.form-control:focus {
+    border-color: black; /* New border color when in focus */
+    outline: none; /* Remove the default blue outline on focus */
+    opacity: 1;
+}
+
+
+a.login-link {
+    cursor: pointer;
+    color: #646464;
+    text-decoration: underline;
+    margin: 0;
+}
+
+a.login-link:hover {
+    color: black;
+}

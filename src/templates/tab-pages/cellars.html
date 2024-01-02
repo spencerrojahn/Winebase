@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+<title>WINEBASE - Cellars</title>
+{% endblock %}
+
+
+{% block tabs %}
+<h4 class="tabs"><a href="{{ url_for('tabs.wines') }}">WINES</a></h4>
+<h4 class="tabs"><a href="{{ url_for('tabs.cellars') }}" style="color:black">CELLARS</a></h4>
+{% endblock %}
+
+
+{% block content_title %}
+<h2>CELLARS</h2>
+{% endblock %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cellars.css') }}">
+<div id="cellars-container">
+    
+</div>
+
+{% endblock %}
