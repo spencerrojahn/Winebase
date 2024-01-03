@@ -16,7 +16,9 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_SERVER_HOST}/{MYSQL_DB_NAME}'
     db.init_app(app)
 
-    from .blueprints import tabs, auth, apis
+    from .blueprints.tabs import tabs
+    from .blueprints.auth import auth
+    from .blueprints.apis import apis
     
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(apis, url_prefix='/apis/')

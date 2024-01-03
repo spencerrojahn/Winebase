@@ -23,6 +23,8 @@
 
 {% block content %}
 <div id="wines-container">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/wines.css') }}">
+    <script src="{{ url_for('static', filename='js/wines.js') }}"></script>
     <div>
         <!-- This is where the filters and column settings will go -->
     </div>
@@ -30,14 +32,21 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
+                <th>Cellar</th>
+                <th>Bin Location</th>
+                <th>Owner</th>
+                <th>Vintage</th>
+                <th>Varietal(s)</th>
+                <th>Wine Name</th>
+                <th>Winery Name</th>
+                <th>Winery Location</th>
+                <th>Vineyard Location</th>
+                <th>Entry Date</th>
+                <th>Drink Date</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
+        <tbody id="wines-table-body">
+            <!-- <tr>
                 <td>1</td>
                 <td>John Doe</td>
                 <td>john@example.com</td>
@@ -48,7 +57,7 @@
                 <td>Jane Smith</td>
                 <td>jane@example.com</td>
                 <td>Admin</td>
-            </tr>
+            </tr> -->
         </tbody>
     </table>
 
