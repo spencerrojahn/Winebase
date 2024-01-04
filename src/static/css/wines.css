@@ -24,9 +24,25 @@ table {
 
 th {
     background-color: #dddddd;
-    /* border-bottom: 1px solid #999999; */
     text-align: center;
-    padding: 5px;
+    padding: 8px;
+}
+
+a.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+a.column-header:hover {
+    cursor: pointer;
+    color: #797979;
+}
+
+span.sorting-symbol {
+    margin: 0 0 0 5px;
+    font-size: 20px;
+    /* align-items: center; */
 }
 
 
@@ -34,4 +50,10 @@ td {
     border-bottom: 1px solid #dddddd;
     text-align: left;
     padding: 5px;
+}
+
+#drank-header {
+    text-align: center;
+    color: #6B1D82;
+    font-size: 20px;
 }
