@@ -2,15 +2,16 @@ from webbrowser import get
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import desc
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import func
 
 from .. import db # means from __init__.py
-from ..models import Owner, User, WineDetails, WineEntry
+from ..models import Owner, User, WineDetails, WineEntry, Cellar
 
 apis = Blueprint('apis', __name__)
 
 TABLE_COLUMNS = [
-    WineEntry.cellar,               # cellar
+    Cellar.name,                    # cellar
     WineEntry.cellar_location,      # cellar location (bin)
     Owner.initials,                 # owner
     WineDetails.vintage,            # vintage
@@ -25,7 +26,7 @@ TABLE_COLUMNS = [
 ]
 
 TABLE_COLUMN_ID_TO_DB_VALUE = {
-    'cellar-column-sort': [WineEntry, 'cellar', WineEntry.cellar],   
+    'cellar-column-sort': [Cellar, 'name'],   
     'bin-location-column-sort': [WineEntry, 'cellar_location'],   
     'owner-column-sort': [Owner, 'initials'],   
     'vintage-column-sort': [WineDetails, 'vintage'],   
@@ -49,12 +50,16 @@ def clean_up_date(date):
     return date.strftime("%m/%d/%Y")
 
 def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
+
     query = (
         db.session.query(*TABLE_COLUMNS)
-        .join(Owner)
+        .select_from(WineEntry)
         .join(WineDetails)
+        .join(Owner)
+        .outerjoin(Cellar, WineEntry.cellar_id == Cellar.id) # doesn't have to be associated to a table
         .filter(WineEntry.user_id == current_user.id)
     )
+    print(query)
 
     if filters:
         pass    # handle later 
@@ -118,7 +123,7 @@ def get_wines():
 
     table_date = [
         [
-            add_cell(entry.cellar),
+            add_cell(entry.name),   # this is cellar name (just functionality)
             add_cell(entry.cellar_location),
             entry.initials,
             add_cell(entry.vintage),

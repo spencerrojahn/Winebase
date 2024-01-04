@@ -1,3 +1,4 @@
+from os import defpath
 from flask_login import UserMixin
 from . import db
 
@@ -7,7 +8,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     
     # One-to-many relationship with WineEntry
-    wine_entries = db.relationship('WineEntry', back_populates='user')
+    wine_entries = db.relationship('WineEntry', back_populates='user', passive_deletes=True)
 
 
 class Owner(db.Model):
@@ -17,7 +18,7 @@ class Owner(db.Model):
     color_num = db.Column(db.Integer, unique=True, nullable=False)
 
     # One-to-many relationship with WineEntry
-    wine_entries = db.relationship('WineEntry', back_populates='owner')
+    wine_entries = db.relationship('WineEntry', back_populates='owner', passive_deletes=True)
 
 
 class WineDetails(db.Model):
@@ -33,7 +34,7 @@ class WineDetails(db.Model):
     personal_rating = db.Column(db.Integer, nullable=True)          # personal rating 1-5 (optional)
 
     # One-to-one relationship with WineEntry
-    wine_entry = db.relationship('WineEntry', back_populates='details', uselist=False)
+    wine_entry = db.relationship('WineEntry', back_populates='details', uselist=False, passive_deletes=True)
 
 
 class WineEntry(db.Model):
@@ -41,10 +42,8 @@ class WineEntry(db.Model):
     entry_date = db.Column(db.Date, nullable=False)
     drink_date = db.Column(db.Date, nullable=True)
     drank = db.Column(db.Boolean, nullable=False, default=False)
-    cellar = db.Column(db.String(50), nullable=True)
-    cellar_location = db.Column(db.String(10), nullable=True)
     purchase_price = db.Column(db.Float, nullable=True)
-    entry_description = db.Column(db.String(1000), nullable=True)
+    acquisition_info = db.Column(db.String(1000), nullable=True)
     personal_notes = db.Column(db.String(1000), nullable=True)
 
     # Foreign key to User
@@ -52,10 +51,26 @@ class WineEntry(db.Model):
     user = db.relationship('User', back_populates='wine_entries')
 
     # Foreign key to Owner
-    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id', ondelete="CASCADE"), nullable=False)
     owner = db.relationship('Owner', back_populates='wine_entries')
 
     # One-to-one relationship with WineDetails
-    details_id = db.Column(db.Integer, db.ForeignKey('wine_details.id'), unique=True, nullable=False)
+    details_id = db.Column(db.Integer, db.ForeignKey('wine_details.id', ondelete="CASCADE"), unique=True, nullable=False)
     details = db.relationship('WineDetails', back_populates='wine_entry')
+
+    # Foreign key to Cellar
+    cellar_id = db.Column(db.Integer, db.ForeignKey('cellar.id', ondelete="CASCADE"), nullable=True)
+    cellar = db.relationship('Cellar', back_populates='wine_entries')
+    cellar_location = db.Column(db.String(10), nullable=True)
+
+
+class Cellar(db.Model):
+    id = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(25), unique=True, nullable=False)
+    height = db.Column(db.Integer, nullable=False)
+    width = db.Column(db.Integer, nullable=False)
+    depth = db.Column(db.Integer, nullable=False)
+
+    # One-to-many relationship with WineEntry
+    wine_entries = db.relationship('WineEntry', back_populates='cellar', passive_deletes=True)
 

@@ -68,7 +68,7 @@ function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
 }
 
 
-function sortingClick(link, sortingSpan)  {
+function sortingClick(columnHeaderlink, sortingSpan)  {
 
     // 1 = unclicked
     // 2 = ascending
@@ -99,7 +99,7 @@ function sortingClick(link, sortingSpan)  {
         case 1:
             // move to state 2 ascending
             sortingSpan.textContent = '\u2191';
-            link.style.color = '#797979';
+            columnHeaderlink.style.color = '#797979';
 
             sendWinesGetRequest(link.id, true, null, 0, 25);
             
@@ -109,7 +109,7 @@ function sortingClick(link, sortingSpan)  {
         case 2:
             // move to state 3 descending
             sortingSpan.textContent = '\u2193';
-            link.style.color = '#797979';
+            columnHeaderlink.style.color = '#797979';
 
             sendWinesGetRequest(link.id, false, null, 0, 25);
 
@@ -119,9 +119,9 @@ function sortingClick(link, sortingSpan)  {
         case 3:
             // move to state 1 unclicked
             sortingSpan.textContent = '\u2191';
-            link.style.color = '#797979';
+            columnHeaderlink.style.color = '#797979';
 
-            sendWinesGetRequest(link.id, true, null, 0, 25);
+            sendWinesGetRequest(columnHeaderlink.id, true, null, 0, 25);
 
             break;
         default:
