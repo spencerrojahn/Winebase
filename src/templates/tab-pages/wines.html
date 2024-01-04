@@ -15,7 +15,7 @@
 
 {% block body_content_header %}
 <div id="body-content-header-add-account">
-    <a id="add-account" class="header" href="{{ url_for('tabs.wines') }}"><span >&#43; ADD WINE</span></a>
+    <a id="add-account" class="header" onclick="handleAddWine()"><span >&#43; ADD WINE</span></a>
 </div>
 {% endblock %}
 
@@ -33,6 +33,230 @@
         <thead id="wines-table-head"></thead>
         <tbody id="wines-table-body"></tbody>
     </table>
+
+    <div id="popupOverlay" class="overlay">
+        <div id="popupContent" class="popup">
+            <div id="popupContentHeader">
+                <h2 id="popupContentHeaderTitle">ADD WINE</h2>
+                <button id="closePopupButton" onclick="closeAddWinePopup()">&#10005;</button>
+            </div>
+            
+            <form id="form-add-wine" method="POST">
+                <div class="add-wine-form-container">
+                    <div id="add-wine-left-side-div">
+                        <div class="add-wine-details-form-group">
+                            <label>Cellar</label>
+                            <select class="add-wine-details-form-control-dropdown" id="cellar-input" name="cellar-input">
+                                <option value="">-</option>
+                                <option value="HOME">HOME</option>
+                            </select>
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Bin Location</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="bin-location-input"
+                                name="bin-location-input"
+                                placeholder="Enter bin location"
+                            />
+                            <!-- Add check to see if the location is available -->
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Owner <span class="required-asteriks">&#42;</span></label>
+                            <select class="add-wine-details-form-control-dropdown" id="owner-input" name="owner-input">
+                                <option value="">-</option>
+                                <option value="SCKR">SCKR</option>
+                                <option value="new-owner">&#43; Add Owner</option>
+                                <!-- Add option to add a new owner -->
+                            </select>
+                        </div>
+                        
+                        <div class="add-wine-details-form-group new-owner">
+                            <label>Owner Name <span class="required-asteriks">&#42;</span></label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control new-owner"
+                                id="new-owner-name-input"
+                                name="new-owner-name-input"
+                                placeholder="Enter New Owner Name"
+                            />
+                            <!-- Add check to see if viable year-->
+                        </div>
+
+                        <div class="add-wine-details-form-group new-owner">
+                            <label>Owner Initials <span class="required-asteriks">&#42;</span></label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control new-owner"
+                                id="new-owner-initials-input"
+                                name="new-owner-initials-input"
+                                placeholder="Enter New Owner Initials"
+                            />
+                        </div>
+
+                        <div class="add-wine-details-form-group new-owner">
+                            <label>Owner Color <span class="required-asteriks">&#42;</span></label>
+                            <select class="add-wine-details-form-control-dropdown new-owner" id="new-owner-color-input" name="new-owner-color-input">
+                                <option value="blue">blue</option>
+                                <option value="red">red</option>
+                                <option value="green">green</option>
+                                <option value="yellow">yellow</option>
+                                <option value="orange">orange</option>
+                            </select>
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Vintage <span class="required-asteriks">&#42;</span></label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="vintage-input"
+                                name="vintage-input"
+                                placeholder="Enter Vintage"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Variertals <span class="required-asteriks">&#42;</span></label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="varietals-input"
+                                name="varietals-input"
+                                placeholder="Enter Vintage"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Wine Name</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="wine-name-input"
+                                name="wine-name-input"
+                                placeholder="Enter Wine Name"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Winery Name</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="winery-name-input"
+                                name="winery-name-input"
+                                placeholder="Enter Winery Name"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Winery Location</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="winery-location-input"
+                                name="winery-location-input"
+                                placeholder="Enter Winery Location"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label>Vineyard Location</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="vineyard-location-input"
+                                name="vineyard-location-input"
+                                placeholder="Enter Vineyard Location"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label for="entry-date-location-input">Entry Date <span class="required-asteriks">&#42;</span></label>
+                            <input
+                                type="date"
+                                class="add-wine-details-form-control-date"
+                                id="entry-date-location-input"
+                                name="entry-date-location-input"
+                            />
+                        </div>
+    
+                        <div class="add-wine-details-form-group">
+                            <label for="drink-date-location-input">Drink Date</label>
+                            <input
+                                type="date"
+                                class="add-wine-details-form-control-date"
+                                id="drink-date-location-input"
+                                name="drink-date-location-input"
+                            />
+                        </div>
+                    </div>
+                    <div id="add-wine-right-side-div">
+                        <div class="add-wine-details-form-group">
+                            <label>Aquisition Info</label>
+                            <textarea
+                                type="text"
+                                class="add-wine-info-form-control"
+                                id="acquisition-info-input"
+                                name="acquisition-info-input"
+                                placeholder="Enter Aquisition Info ..."
+                            ></textarea>
+                        </div>
+                        <div class="add-wine-details-form-group">
+                            <label>Personal Notes</label>
+                            <textarea
+                                type="text"
+                                class="add-wine-info-form-control"
+                                id="personal-notes-input"
+                                name="personal-notes-input"
+                                placeholder="Enter Personal Notes ..."
+                            ></textarea>
+                        </div>
+                        <div class="add-wine-details-form-group">
+                            <label>Expert Rater Name</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="expert-rater-name-input"
+                                name="expert-rater-input"
+                                placeholder="Enter Expert Rater Name"
+                            />
+                        </div>
+                        <div class="add-wine-details-form-group">
+                            <label>Expert Rating</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="expert-rating-input"
+                                name="expert-rating-input"
+                                placeholder="Enter Expert Rating"
+                            />
+                        </div>
+                        <div class="add-wine-details-form-group">
+                            <label>Peronal Rating</label>
+                            <input
+                                type="text"
+                                class="add-wine-details-form-control"
+                                id="peronal-rating-input"
+                                name="personal-rating-input"
+                                placeholder="Enter Personal Rating"
+                            />
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="add-wine-bottom">
+                    <button type="submit" id="clear-add-wine">CLEAR</button>
+                    <button type="submit" id="add-wine-submit">SUBMIT</button>
+                </div>
+                
+
+            </form>
+        </div>
+    </div>
 
 </div>
 

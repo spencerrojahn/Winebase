@@ -131,6 +131,21 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
 }
 
 
+function handleAddWine() {
+    console.log("clicked")
+
+    const popupOverlay = document.getElementById('popupOverlay');
+    popupOverlay.style.display = 'flex';
+}
+
+function closeAddWinePopup() {
+    const popupOverlay = document.getElementById('popupOverlay');
+    popupOverlay.style.display = 'none';
+}
+
+
+
+
 function onPageLoad() {
     
     // Get the table header element
@@ -191,6 +206,81 @@ function onPageLoad() {
     sendWinesGetRequest('drink-date-column-sort', true, null, 0, 25);
     // sendWinesGetRequest(null, null, null, 0, 25);
 }
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    function getToday() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    document.getElementById('entry-date-location-input').value = getToday();
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    var selectElement = document.getElementById('owner-input');
+    // Get the conditional element
+  
+    var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
+
+    // Add event listener to the select element
+    selectElement.addEventListener('input', function () {
+        // Check if Option 2 is selected
+        if (selectElement.value === 'new-owner') {
+            // Show the conditional element
+            conditionalElements.forEach(function (element) {
+                element.style.display = 'flex';
+            })
+            // conditionalElement.style.display = 'flex';
+        } else {
+            // Hide the conditional element
+            conditionalElements.forEach(function (element) {
+                element.style.display = 'none';
+            })
+        }
+    });
+});
+
+
+// window.addEventListener('resize', function () {
+//     var minWidth = 1000;
+
+
+//     // Check if the window width is less than the minimum
+//     if (window.innerWidth < minWidth) {
+//         // Enforce the minimum width 
+//         var wineDetails = document.querySelectorAll('.add-wine-details-form-control');
+
+//         wineDetails.forEach(function (element) {
+//             element.style.fontSize = '12px';
+//         })
+
+//         var wineDetails = document.querySelectorAll('.add-wine-info-form-control');
+
+//         wineDetails.forEach(function (element) {
+//             element.style.fontSize = '12px';
+//         })
+//     } else {
+//         var wineDetails = document.querySelectorAll('.add-wine-details-form-control');
+
+//         wineDetails.forEach(function (element) {
+//             element.style.fontSize = '14px';
+//         })
+
+//         var wineDetails = document.querySelectorAll('.add-wine-info-form-control');
+
+//         wineDetails.forEach(function (element) {
+//             element.style.fontSize = '14px';
+//         })
+//     }
+    
+// });
+
+
 
 
 
