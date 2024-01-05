@@ -45,7 +45,7 @@
                 <div class="add-wine-form-container">
                     <div id="add-wine-left-side-div">
                         <div class="add-wine-details-form-group">
-                            <label>Cellar</label>
+                            <label for="cellar-input">Cellar</label>
                             <select class="add-wine-details-form-control-dropdown" id="cellar-input" name="cellar-input">
                                 <option value="">-</option>
                                 <option value="HOME">HOME</option>
@@ -53,19 +53,19 @@
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Bin Location</label>
+                            <label for="bin-location-input">Bin Location</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="bin-location-input"
                                 name="bin-location-input"
-                                placeholder="Enter bin location"
+                                placeholder="ex: A1-F"
                             />
                             <!-- Add check to see if the location is available -->
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Owner <span class="required-asteriks">&#42;</span></label>
+                            <label for="owner-input">Owner <span class="required-asteriks">&#42;</span></label>
                             <select class="add-wine-details-form-control-dropdown" id="owner-input" name="owner-input">
                                 <option value="">-</option>
                                 <option value="SCKR">SCKR</option>
@@ -75,30 +75,30 @@
                         </div>
                         
                         <div class="add-wine-details-form-group new-owner">
-                            <label>Owner Name <span class="required-asteriks">&#42;</span></label>
+                            <label for="new-owner-name-input">Name <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control new-owner"
                                 id="new-owner-name-input"
                                 name="new-owner-name-input"
-                                placeholder="Enter New Owner Name"
+                                placeholder="ex. Spencer"
                             />
                             <!-- Add check to see if viable year-->
                         </div>
 
                         <div class="add-wine-details-form-group new-owner">
-                            <label>Owner Initials <span class="required-asteriks">&#42;</span></label>
+                            <label for="new-owner-initials-input">Initials <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control new-owner"
                                 id="new-owner-initials-input"
                                 name="new-owner-initials-input"
-                                placeholder="Enter New Owner Initials"
+                                placeholder="ex. SCKR"
                             />
                         </div>
 
                         <div class="add-wine-details-form-group new-owner">
-                            <label>Owner Color <span class="required-asteriks">&#42;</span></label>
+                            <label for="new-owner-color-input">Color <span class="required-asteriks">&#42;</span></label>
                             <select class="add-wine-details-form-control-dropdown new-owner" id="new-owner-color-input" name="new-owner-color-input">
                                 <option value="blue">blue</option>
                                 <option value="red">red</option>
@@ -109,68 +109,68 @@
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Vintage <span class="required-asteriks">&#42;</span></label>
+                            <label for="vintage-input">Vintage <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="vintage-input"
                                 name="vintage-input"
-                                placeholder="Enter Vintage"
+                                placeholder="ex: 2016"
                             />
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Variertals <span class="required-asteriks">&#42;</span></label>
+                            <label for=varietals-input>Varietal(s) <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="varietals-input"
                                 name="varietals-input"
-                                placeholder="Enter Vintage"
+                                placeholder="ex: Syrah"
                             />
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Wine Name</label>
+                            <label for="wine-name-input">Wine Name</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="wine-name-input"
                                 name="wine-name-input"
-                                placeholder="Enter Wine Name"
+                                placeholder="ex: Cing Cepages"
                             />
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Winery Name</label>
+                            <label for="winery-name-input">Winery Name</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="winery-name-input"
                                 name="winery-name-input"
-                                placeholder="Enter Winery Name"
+                                placeholder="ex: St. Francis"
                             />
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Winery Location</label>
+                            <label for="winery-location-input">Winery Location</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="winery-location-input"
                                 name="winery-location-input"
-                                placeholder="Enter Winery Location"
+                                placeholder="ex: Sonoma County, CA"
                             />
                         </div>
     
                         <div class="add-wine-details-form-group">
-                            <label>Vineyard Location</label>
+                            <label for="vineyard-location-input">Vineyard Location</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="vineyard-location-input"
                                 name="vineyard-location-input"
-                                placeholder="Enter Vineyard Location"
+                                placeholder="ex: Winery Estate, ..."
                             />
                         </div>
     
@@ -178,7 +178,7 @@
                             <label for="entry-date-location-input">Entry Date <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="date"
-                                class="add-wine-details-form-control-date"
+                                class="add-wine-details-form-control .date-input"
                                 id="entry-date-location-input"
                                 name="entry-date-location-input"
                             />
@@ -188,68 +188,80 @@
                             <label for="drink-date-location-input">Drink Date</label>
                             <input
                                 type="date"
-                                class="add-wine-details-form-control-date"
+                                class="add-wine-details-form-control .date-input"
                                 id="drink-date-location-input"
                                 name="drink-date-location-input"
                             />
                         </div>
+                        <div class="add-wine-details-form-group">
+                            <label for="drank-input">Drank?</label>
+                            <select class="add-wine-details-form-control-dropdown" id="drank-input" name="drank-input">
+                                <option value="">-</option>
+                                <option value="YES">YES</option>
+                                <option value="NO">NO</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="add-wine-right-side-div">
                         <div class="add-wine-details-form-group">
-                            <label>Aquisition Info</label>
+                            <label for="acquisition-info-input">Aquisition Info</label>
                             <textarea
                                 type="text"
                                 class="add-wine-info-form-control"
                                 id="acquisition-info-input"
                                 name="acquisition-info-input"
-                                placeholder="Enter Aquisition Info ..."
+                                placeholder="ex: Q1 wine shipment OR Wine tasting purchase - 6/3/2023"
                             ></textarea>
                         </div>
                         <div class="add-wine-details-form-group">
-                            <label>Personal Notes</label>
+                            <label for="personal-notes-input">Personal Notes</label>
                             <textarea
                                 type="text"
                                 class="add-wine-info-form-control"
                                 id="personal-notes-input"
                                 name="personal-notes-input"
-                                placeholder="Enter Personal Notes ..."
+                                placeholder="ex: Bold, tanniny and vibrant"
                             ></textarea>
                         </div>
                         <div class="add-wine-details-form-group">
-                            <label>Expert Rater Name</label>
+                            <label for="expert-rater-name-input">Expert Rater Name</label>
                             <input
                                 type="text"
                                 class="add-wine-details-form-control"
                                 id="expert-rater-name-input"
                                 name="expert-rater-input"
-                                placeholder="Enter Expert Rater Name"
+                                placeholder="ex: Robert Parker"
                             />
                         </div>
                         <div class="add-wine-details-form-group">
-                            <label>Expert Rating</label>
+                            <label for="expert-rating-input">Expert Rating</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="add-wine-details-form-control"
                                 id="expert-rating-input"
                                 name="expert-rating-input"
-                                placeholder="Enter Expert Rating"
+                                min="50"
+                                max="100"
+                                placeholder="ex: 94"
                             />
                         </div>
                         <div class="add-wine-details-form-group">
-                            <label>Peronal Rating</label>
+                            <label for="personal-rating-input">Personal Rating (1-5)</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="add-wine-details-form-control"
-                                id="peronal-rating-input"
+                                id="personal-rating-input"
                                 name="personal-rating-input"
-                                placeholder="Enter Personal Rating"
+                                min="1"
+                                max="5"
+                                placeholder="ex: 4"
                             />
                         </div>
                     </div>
                 </div>
                 
                 <div id="add-wine-bottom">
-                    <button type="submit" id="clear-add-wine">CLEAR</button>
+                    <button type="reset" id="clear-add-wine" onclick="hideNewOwnerInputFields()">CLEAR</button>
                     <button type="submit" id="add-wine-submit">SUBMIT</button>
                 </div>
                 

@@ -1,5 +1,4 @@
 
-
 function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
     // Generate the URL for the internal route with the user parameter
     var wines_api_url = "/apis/wines";
@@ -13,6 +12,7 @@ function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
         offset: offset,
         limit: limit        
     };
+
 
 
     // Use the Fetch API to make the internal GET request
@@ -34,6 +34,7 @@ function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
         // Iterate through the list of lists and create rows
         data.forEach(list => {
             // Create a new row
+
             var row = table_body.insertRow();
             
             // Set background collor if drank
@@ -42,21 +43,46 @@ function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
                 
             }
 
+            console.log(list)
+
             // Iterate through the items in the list and create cells
             list.forEach((item, index) => {
-                var cell = row.insertCell();
                 
-                // set last row to be in the middle and use check mark
-                if (index === list.length - 1) {
-                    cell.id += 'drank-header';
-                    if (item === true) {
-                        cell.textContent = '\u2713';
-                    } 
-                } else {
-                    // else set the item normally
-                    cell.textContent = item;
+                // first index is the WineEntry id
+                if (index > 0) {
+                    var cell = row.insertCell();
+                    // set last row to be in the middle and use check mark
+                    if (index === list.length - 1) {
+                        cell.id += 'drank-header';
+                        if (item === true) {
+                            cell.textContent = '\u2713';
+                        } 
+                    } else {
+                        // else set the item normally
+                        cell.textContent = item;
+                    }
                 }
+                
             });
+            
+            // Create a new anchor element
+            var link = document.createElement('a');
+            link.className = "wine-detail-row-link"
+
+            // The id contains the WineEntry.id from this given row entry (so that it can be used later
+            // on for fetching the details for this given WineEntry)
+            link.id = 'wine-detail-row-link_' + list[0]
+            
+            // Set the href attribute to your desired URL
+            link.href = '#';
+            // Set any other necessary attributes or styles for the link
+            link.textContent = 'Details'; // Set the link text
+
+            // Create a cell for the link and append the link to it
+            var linkCell = row.insertCell();
+            linkCell.style.textAlign = 'center';
+            linkCell.appendChild(link);
+
         });
 
     })
@@ -74,7 +100,7 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
     // 2 = ascending
     // 3 = descending
     var currentState;
-    if (link.style.color === 'black') {
+    if (columnHeaderlink.style.color === 'black') {
         currentState = 1;
     } else {
         if (sortingSpan.textContent === '\u2191') {
@@ -101,7 +127,7 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2191';
             columnHeaderlink.style.color = '#797979';
 
-            sendWinesGetRequest(link.id, true, null, 0, 25);
+            sendWinesGetRequest(columnHeaderlink.id, true, null, 0, 25);
             
             // send get request for ascending for this given column
 
@@ -111,7 +137,7 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2193';
             columnHeaderlink.style.color = '#797979';
 
-            sendWinesGetRequest(link.id, false, null, 0, 25);
+            sendWinesGetRequest(columnHeaderlink.id, false, null, 0, 25);
 
             // send get request for desc on this given column
 
@@ -133,6 +159,8 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
 
 function handleAddWine() {
     console.log("clicked")
+    
+    document.getElementById('entry-date-location-input').value = getToday();
 
     const popupOverlay = document.getElementById('popupOverlay');
     popupOverlay.style.display = 'flex';
@@ -152,16 +180,16 @@ function onPageLoad() {
     var tableHead = document.querySelector('#wines-table-head');
 
     // Define an array of column names (including names with spaces)
-    var columnNames = ['Cellar', 'Bin Location', 'Owner', 'Vintage', 'Varietals', 
+    var columnNames = ['Cellar', 'Bin Location', 'Owner', 'Vintage', 'Varietal(s)', 
                         'Wine Name', 'Winery Name', 'Winery Location',
-                        'Vineyard Location', 'Entry Date', 'Drink Date', 'Drank'];
+                        'Vineyard Location', 'Entry Date', 'Drink Date', 'Drank', "Details"];
 
     // Create th elements and append them to the table header
     columnNames.forEach(function(columnName) {
         var th = document.createElement('th');
 
         // Replace spaces with dashes in the column name for the id attribute
-        var columnNameId = columnName.toLowerCase().replace(/\s+/g, '-');
+        var columnNameId = columnName.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g,'');
 
         // Create link element
         var link = document.createElement('a');
@@ -208,28 +236,37 @@ function onPageLoad() {
 }
 
 
+function getToday() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
-    function getToday() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
     document.getElementById('entry-date-location-input').value = getToday();
 });
 
 
+function hideNewOwnerInputFields() {
+    
+    var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
+    // Hide the conditional element
+    conditionalElements.forEach(function (element) {
+        element.style.display = 'none';
+    })
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     var selectElement = document.getElementById('owner-input');
     // Get the conditional element
-  
-    var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
-
     // Add event listener to the select element
     selectElement.addEventListener('input', function () {
         // Check if Option 2 is selected
+
+        var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
+        
         if (selectElement.value === 'new-owner') {
             // Show the conditional element
             conditionalElements.forEach(function (element) {
@@ -246,39 +283,56 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// window.addEventListener('resize', function () {
-//     var minWidth = 1000;
+window.addEventListener('resize', function () {
+    var minWidth = 1000;
 
 
-//     // Check if the window width is less than the minimum
-//     if (window.innerWidth < minWidth) {
-//         // Enforce the minimum width 
-//         var wineDetails = document.querySelectorAll('.add-wine-details-form-control');
+    // Check if the window width is less than the minimum
+    if (window.innerWidth < minWidth) {
+        // Enforce the minimum width 
+        var wineDeta = document.querySelectorAll('.add-wine-details-form-group, .add-wine-details-form-control, .add-wine-info-form-control');
 
-//         wineDetails.forEach(function (element) {
-//             element.style.fontSize = '12px';
-//         })
+        wineDeta.forEach(function (element) {
+            element.style.fontSize = '10px';
+        })
 
-//         var wineDetails = document.querySelectorAll('.add-wine-info-form-control');
+        var newOwner = document.querySelectorAll('.new-owner');
 
-//         wineDetails.forEach(function (element) {
-//             element.style.fontSize = '12px';
-//         })
-//     } else {
-//         var wineDetails = document.querySelectorAll('.add-wine-details-form-control');
+        newOwner.forEach(function (element) {
+            element.style.fontSize = '9px';
+        })
+    } else {
+        var wineDeta = document.querySelectorAll('.add-wine-details-form-group, .add-wine-details-form-control, .add-wine-info-form-control');
 
-//         wineDetails.forEach(function (element) {
-//             element.style.fontSize = '14px';
-//         })
+        wineDeta.forEach(function (element) {
+            element.style.fontSize = '14px';
+        })
 
-//         var wineDetails = document.querySelectorAll('.add-wine-info-form-control');
+        var newOwner = document.querySelectorAll('.new-owner');
 
-//         wineDetails.forEach(function (element) {
-//             element.style.fontSize = '14px';
-//         })
-//     }
+        newOwner.forEach(function (element) {
+            element.style.fontSize = '11px';
+        })
+    }
     
-// });
+});
+
+
+
+// ADD WINE FORM VALIDATIONS
+
+// document.getElementById('bin-location-input').addEventListener('blue', function() {
+//     var inputValue = this.value;
+
+// })
+
+
+
+
+
+
+
+
 
 
 

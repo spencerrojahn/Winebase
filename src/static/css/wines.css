@@ -13,7 +13,7 @@
 
 #wines-container {
     padding: 5px 40px;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 
@@ -58,6 +58,14 @@ td {
     font-size: 20px;
 }
 
+.wine-detail-row-link {
+    color: #6B1D82;
+}
+.wine-detail-row-link:hover {
+    color: #ab33cf;
+}
+
+
 
 #popupOverlay {
     position: fixed;
@@ -74,7 +82,7 @@ td {
 
 #popupContent {
     background: white;
-    padding: 20px;
+    padding: 20px 30px;
     border-radius: 10px;
     width: 60%;
     /* height: 80%; */
@@ -117,7 +125,7 @@ td {
 }
 
 #form-add-wine {
-    margin: 20px 10px 10px 10px;
+    margin-top: 20px;
 }
 
 #add-wine-left-side-div {
@@ -134,13 +142,13 @@ td {
 .add-wine-details-form-group {
     display: flex;
     padding: 5px;
-    font-size: 14px;
+    font-size: 13px;
     align-items: center;
     justify-content: space-between;
 }
 .add-wine-details-form-control {
-    font-size: 14px;
-    padding: 3px;
+    font-size: 13px;
+    padding: 4px;
 }
 
 .add-wine-details-form-control-dropdown {
@@ -165,21 +173,21 @@ label {
     width: 100%;
     height: 50px;
     resize: none;
-    font-size: 14px;
-    padding: 3px;
+    font-size: 13px;
+    padding: 4px;
 }
 
 .add-wine-details-form-group.new-owner {
     display: none;
     font-size: 11px;
-    padding: 3px 25px;
+    padding: 2px 25px;
     align-items: right;
     /* width: 75%; */
 }
 
 .add-wine-details-form-control.new-owner {
     font-size: 11px;
-    padding: 2px;
+    padding: 3px;
 }
 
 .add-wine-details-form-control-dropdown.new-owner {
@@ -190,7 +198,7 @@ label {
 
 .required-asteriks {
     color: red;
-    font-size: 16px;
+    /* font-size: 16px; */
 }
 
 
@@ -238,3 +246,32 @@ label {
 #logout-button:hover {
     background-color: #999999;
 } */
+
+
+
+input, textarea, select {
+    color: black;
+    border-radius: 5px;
+    border: 1px solid #999999; 
+    opacity: 0.7;
+    width: 50%;
+}
+
+input::placeholder {
+    color: #999999; /* Adjust the color to your preference */
+}
+
+input:hover, textarea:hover, select:hover {
+    border-color: #646464;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: black; /* New border color when in focus */
+    outline: none; /* Remove the default blue outline on focus */
+    opacity: 1;
+}
+
+
+input[type="number"] {
+    width: 65px;
+}

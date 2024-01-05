@@ -11,6 +11,7 @@ from ..models import Owner, User, WineDetails, WineEntry, Cellar
 apis = Blueprint('apis', __name__)
 
 TABLE_COLUMNS = [
+    WineEntry.id,
     Cellar.name,                    # cellar
     WineEntry.cellar_location,      # cellar location (bin)
     Owner.initials,                 # owner
@@ -59,7 +60,6 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
         .outerjoin(Cellar, WineEntry.cellar_id == Cellar.id) # doesn't have to be associated to a table
         .filter(WineEntry.user_id == current_user.id)
     )
-    print(query)
 
     if filters:
         pass    # handle later 
@@ -103,8 +103,6 @@ def get_wines():
     # Get the JSON payload from the request
     body = request.get_json()
 
-    print(body)
-
     sortColumnId = body['sort']['value'] 
     sortOrder = body['sort']['order'] 
 
@@ -123,6 +121,7 @@ def get_wines():
 
     table_date = [
         [
+            entry.id,
             add_cell(entry.name),   # this is cellar name (just functionality)
             add_cell(entry.cellar_location),
             entry.initials,
@@ -143,6 +142,9 @@ def get_wines():
 
 
 
+
+# @apis.route('/validate_wine_form', methods=['POST'])
+# def validate_wine_form():
 
 
 
