@@ -1,9 +1,9 @@
 
 function sendWinesGetRequest(sortColumnId, sortOrder, filters, offset, limit) {
     // Generate the URL for the internal route with the user parameter
-    var wines_api_url = "/apis/wines";
+    const wines_api_url = "/apis/wines";
 
-    var request_body = {
+    const request_body = {
         sort: {
             value: sortColumnId,
             order: sortOrder
@@ -258,6 +258,16 @@ function hideNewOwnerInputFields() {
     document.getElementById('varietals-input').classList.add('invalid-input')
     document.getElementById('entry-date-location-input').classList.add('invalid-input')
 
+    document.getElementById('wine-name-input').classList.remove('invalid-input')
+    document.getElementById('winery-name-input').classList.remove('invalid-input')
+    document.getElementById('winery-location-input').classList.remove('invalid-input')
+    document.getElementById('vineyard-location-input').classList.remove('invalid-input')
+    document.getElementById('acquisition-info-input').classList.remove('invalid-input')
+    document.getElementById('personal-notes-input').classList.remove('invalid-input')
+    document.getElementById('expert-rater-name-input').classList.remove('invalid-input')
+    document.getElementById('expert-rating-input').classList.remove('invalid-input')
+    document.getElementById('personal-rating-input').classList.remove('invalid-input')
+
 
     var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
     // Hide the conditional element
@@ -280,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function () {
             conditionalElements.forEach(function (element) {
                 element.style.display = 'flex';
             })
-            // conditionalElement.style.display = 'flex';
         } else {
             // Hide the conditional element
             conditionalElements.forEach(function (element) {
@@ -501,9 +510,6 @@ function isValidDrinkDate() {
     var currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 
-
-
-
     if (drankInput.value === 'NO') {
         if (drinkDate <= currentDate) {
             drinkDateInput.classList.add('invalid-input')
@@ -517,14 +523,88 @@ function isValidDrinkDate() {
         } 
     }
     
-    
     drinkDateInput.classList.remove('invalid-input')
     return true
+}
 
+function validateOptionalTextField(input, inputMaxLength) {
+    if (input.value !== '' && input.value.length > inputMaxLength) {
+        input.classList.add('invalid-input')
+        return false
+    }
 
+    input.classList.remove('invalid-input')
+    return true
+}
+
+function optionalTextFieldsValidation() {
+    var list = [
+        [document.getElementById('wine-name-input'), 150],
+        [document.getElementById('winery-name-input'), 255],
+        [document.getElementById('winery-location-input'), 500],
+        [document.getElementById('vineyard-location-input'), 500],
+        [document.getElementById('acquisition-info-input'), 1000],
+        [document.getElementById('personal-notes-input'), 1000],
+        [document.getElementById('expert-rater-name-input'), 150]
+    ]
+
+    console.log(document.getElementById('wine-name-input').value.length)
+
+    list.forEach(item => {
+        if (!validateOptionalTextField(item[0], item[1])) {
+            return false
+        }
+    })
+    return true
+}      
+
+function validateExpertRating() {
+    var expertRaterNameInput = document.getElementById('expert-rater-name-input')
+    var expertRatingInput = document.getElementById('expert-rating-input')
+
+    if (expertRaterNameInput.value === '') {
+        if (expertRatingInput.value === '') {
+            expertRaterNameInput.classList.remove('invalid-input')
+            expertRatingInput.classList.remove('invalid-input')
+            return true
+        } else {
+            // Rating is present but no name
+            if (expertRatingInput.value > 101 || expertRatingInput.value < 50) {
+                expertRaterNameInput.classList.remove('invalid-input')
+                expertRatingInput.classList.add('invalid-input')
+                return false
+            } else {
+                expertRaterNameInput.classList.add('invalid-input')
+                expertRatingInput.classList.remove('invalid-input')
+                return false
+            }
+        }
+    } else {
+        console.log(expertRatingInput.value)
+        if (expertRatingInput.value !== '' && expertRatingInput.value <= 100 && expertRatingInput.value >= 50) {
+            expertRaterNameInput.classList.remove('invalid-input')
+            expertRatingInput.classList.remove('invalid-input')
+            return true
+            
+        } else {
+            expertRaterNameInput.classList.remove('invalid-input')
+            expertRatingInput.classList.add('invalid-input')
+            return false
+        }
+    }
     
 }
-      
+
+function validatePersonalRating() {
+    var personalRatingInput = document.getElementById('personal-rating-input')
+
+    if (personalRatingInput.value !== '' && (personalRatingInput.value > 5 || personalRatingInput.value < 1)) {
+        personalRatingInput.classList.add('invalid-input')
+        return false
+    } 
+    personalRatingInput.classList.remove('invalid-input')
+    return true
+}
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -542,8 +622,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var validOwner = isOwnerValid()
         var validVintage = isValidVintage()
         var validVarietals = isValidVarietals()
+        var validOptionalTextFields = optionalTextFieldsValidation()
         var validEntryDate = isValidEntryDate()
         var validDrinkDate = isValidDrinkDate()
+        var validExperRating = validateExpertRating()
+        var validPersonalRating = validatePersonalRating()
 
         // console.log(validCellarLocation)
 
@@ -552,17 +635,83 @@ document.addEventListener('DOMContentLoaded', function () {
         // const input2Valid = document.getElementById('vintage-input').value.trim() !== '';
 
         // // Enable or disable the submit button based on validation results
-        document.getElementById('add-wine-submit').disabled = !(validCellarLocation && validOwner && validVintage && validVarietals && validEntryDate && validDrinkDate);
+        document.getElementById('add-wine-submit').disabled = !(validCellarLocation && validOwner 
+                                                                && validVintage && validVarietals 
+                                                                && validOptionalTextFields && validEntryDate
+                                                                && validDrinkDate && validExperRating
+                                                                && validPersonalRating);
     });
-
-
-
 
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    
+    document.getElementById('form-add-wine').addEventListener('submit', function (submitEvent) {
+        submitEvent.preventDefault()
+        
+        // Get form data
+        // const formData = new FormData(submitEvent.target);
+        // const cellar = formData.get('cellar-input').options[];
+
+        // Make API request
+        const add_wine_url = '/apis/add-wine';  // Replace with your Flask API endpoint
 
 
 
+        // const cellar = document.getElementById('cellar-input').value
+
+
+        const request_body = { 
+            cellar: document.getElementById('cellar-input').value,
+            binLocation: document.getElementById('bin-location-input').value,
+            owner: document.getElementById('owner-input').value,
+            newOwnerName: document.getElementById('new-owner-name-input').value,
+            newOwnerInitials: document.getElementById('new-owner-initials-input').value,
+            newOwnerColor: document.getElementById('new-owner-color-input').value,
+            vintage: document.getElementById('vintage-input').value,
+            varietals: document.getElementById('varietals-input').value,
+            wineName: document.getElementById('wine-name-input').value,
+            wineryName: document.getElementById('winery-name-input').value,
+            wineryLocation: document.getElementById('winery-location-input').value,
+            vineyardLocation: document.getElementById('vineyard-location-input').value,
+            entryDate: document.getElementById('entry-date-location-input').value,
+            drank: document.getElementById('drank-input').value,
+            drinkDate: document.getElementById('drink-date-location-input').value,
+            aquisitionInfo: document.getElementById('acquisition-info-input').value,
+            personalNotes: document.getElementById('personal-notes-input').value,
+            expertRaterName: document.getElementById('expert-rater-name-input').value,
+            expertRating: document.getElementById('expert-rating-input').value,
+            personalRating: document.getElementById('personal-rating-input').value
+        };
+
+        fetch(add_wine_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request_body)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
+            // Process the API response as needed
+
+            
+            const popupOverlay = document.getElementById('popupOverlay');
+            popupOverlay.style.display = 'none';
+            hideNewOwnerInputFields()
+
+            document.getElementById('form-add-wine').reset()
+            
+
+
+
+        })
+        .catch(error => console.error('API Error:', error));
+    })
+
+
+})
 
 
 

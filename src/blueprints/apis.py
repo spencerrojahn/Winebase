@@ -142,6 +142,12 @@ def get_wines():
 
 
 
+@apis.route('/add-wine', methods=['POST'])
+def add_wine():
+    body = request.get_json()
+    print(body)
+    return body
+
 
 # @apis.route('/validate_wine_form', methods=['POST'])
 # def validate_wine_form():
