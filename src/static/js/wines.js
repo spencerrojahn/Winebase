@@ -250,6 +250,8 @@ function onPageLoad() {
 
 
 function hideNewOwnerInputFields() {
+
+    document.getElementById('add-wine-submit').disabled = true;
     
     document.getElementById('owner-input').classList.add('invalid-input')
     document.getElementById('vintage-input').classList.add('invalid-input')
