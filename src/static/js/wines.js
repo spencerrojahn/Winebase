@@ -160,7 +160,7 @@ function sortingClick(columnHeaderlink, sortingSpan)  {
 function handleAddWine() {
     console.log("clicked")
     
-    document.getElementById('entry-date-location-input').value = getToday();
+    // document.getElementById('entry-date-location-input').value = getToday();
 
     const popupOverlay = document.getElementById('popupOverlay');
     popupOverlay.style.display = 'flex';
@@ -236,21 +236,27 @@ function onPageLoad() {
 }
 
 
-function getToday() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
+// function getToday() {
+//     const today = new Date();
+//     const year = today.getFullYear();
+//     const month = String(today.getMonth() + 1).padStart(2, '0');
+//     const day = String(today.getDate()).padStart(2, '0');
+//     return `${year}-${month}-${day}`;
+// }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('entry-date-location-input').value = getToday();
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//     document.getElementById('entry-date-location-input').value = getToday();
+// });
 
 
 function hideNewOwnerInputFields() {
     
+    document.getElementById('owner-input').classList.add('invalid-input')
+    document.getElementById('vintage-input').classList.add('invalid-input')
+    document.getElementById('varietals-input').classList.add('invalid-input')
+    document.getElementById('entry-date-location-input').classList.add('invalid-input')
+
+
     var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner');
     // Hide the conditional element
     conditionalElements.forEach(function (element) {
@@ -327,8 +333,230 @@ window.addEventListener('resize', function () {
 // })
 
 
+function isValidCellarLocation() {
+    var cellarInputValue = document.getElementById('cellar-input').value
+    var binLocationInputValue = document.getElementById('bin-location-input').value.trim()
+    if (cellarInputValue !== '') {
+        // If cellar is not blank, then if bin location is blank --> invalid
+        if (binLocationInputValue === '') {
+            document.getElementById('bin-location-input').classList.add('invalid-input')
+            return false;
+        } else {
+            document.getElementById('cellar-input').classList.remove('invalid-input')
+
+            // If cellar is not blank, then if bin location is NOT blank --> valid
+            var pattern = /^[A-Z]\d-[FB]$/;
+
+            if (pattern.test(binLocationInputValue)) {
+                document.getElementById('bin-location-input').classList.remove('invalid-input')
+
+                // need to do lookup here for availability:
+
+            } else {
+                document.getElementById('bin-location-input').classList.add('invalid-input')
+                return false;
+            }   
+
+            return true;
+
+            // need to do cellar lookup here to see if location is fine
 
 
+        }
+        
+    } else {
+        if (binLocationInputValue !== '') {
+            // If cellar is blank, then if bin location is NOT blank --> invalid
+
+            var pattern = /^[A-Z]\d-[FB]$/;
+
+            if (pattern.test(binLocationInputValue)) {
+                document.getElementById('bin-location-input').classList.remove('invalid-input')
+                document.getElementById('cellar-input').classList.add('invalid-input')
+
+                // need to do lookup here for availability:
+
+            } else {
+                document.getElementById('bin-location-input').classList.add('invalid-input')
+                document.getElementById('cellar-input').classList.remove('invalid-input')
+                return false;
+            }  
+            return false;
+        } else {
+            document.getElementById('bin-location-input').classList.remove('invalid-input')
+            document.getElementById('cellar-input').classList.remove('invalid-input')
+        }
+        // If cellar is blank, then if bin location is blank --> valid
+    }
+    return true;
+}
+
+function isOwnerValid() {
+    var ownerInput = document.getElementById('owner-input')
+
+    var newOwnerName = document.getElementById('new-owner-name-input')
+    var newOwnerInitials = document.getElementById('new-owner-initials-input')
+    var newOwnerColor = document.getElementById('new-owner-color-input')
+
+    if (ownerInput.value !== '') {
+        ownerInput.classList.remove('invalid-input')
+
+        if (ownerInput.value === 'new-owner') {
+            console.log('bob');
+            
+            valid = true
+            if (newOwnerName.value !== '' && newOwnerName.value.length <= 40) {
+                newOwnerName.classList.remove('invalid-input')
+            } else {
+                newOwnerName.classList.add('invalid-input')
+                valid = false;
+            }
+
+            if (newOwnerInitials.value !== '' 
+                && newOwnerInitials.value.length <= 4
+                && /^[A-Z]+$/.test(newOwnerInitials.value)) {
+                newOwnerInitials.classList.remove('invalid-input')
+            } else {
+                newOwnerInitials.classList.add('invalid-input')
+                valid = false;
+            }
+
+            if (newOwnerColor.value !== '') {
+                newOwnerColor.classList.remove('invalid-input')
+            } else {
+                newOwnerColor.classList.add('invalid-input')
+                valid = false;
+            }
+
+            return valid;
+
+        } else {
+            return true;
+        }
+    } else {
+        ownerInput.classList.add('invalid-input')
+        return false;
+    }
+}
+
+function isValidVintage() {
+    var vintageInput = document.getElementById('vintage-input')
+
+    if (vintageInput.value !== ''
+        && /^(19\d{2}|20\d{2})$/.test(vintageInput.value)
+        && parseInt(vintageInput.value, 10) <= new Date().getFullYear()
+        ) {
+        vintageInput.classList.remove('invalid-input')
+        return true;
+    } else {
+        vintageInput.classList.add('invalid-input')
+        return false;
+    }
+}
+
+function isValidVarietals() {
+    var varietalsInput = document.getElementById('varietals-input')
+    if (varietalsInput.value != '') {
+        varietalsInput.classList.remove('invalid-input')
+        return true;
+    } else {
+        varietalsInput.classList.add('invalid-input')
+        return false;
+    }
+}
+
+function isValidEntryDate() {
+    var entryDateInput = document.getElementById('entry-date-location-input')
+    if (entryDateInput.value != '') {
+        // Convert the input string to a Date object
+        var entryDate = new Date(entryDateInput.value);
+            
+        // Get the current date
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (entryDate <= currentDate) {
+            entryDateInput.classList.remove('invalid-input')
+            return true
+        } else {
+            entryDateInput.classList.add('invalid-input')
+            return false;
+        }
+
+    } else {
+        entryDateInput.classList.add('invalid-input')
+        return false;
+    }
+}
+
+function isValidDrinkDate() {
+    var drinkDateInput = document.getElementById('drink-date-location-input')
+    var drankInput = document.getElementById('drank-input')
+
+    var drinkDate = new Date(drinkDateInput.value);
+
+    // Get the current date
+    var currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+
+
+
+    if (drankInput.value === 'NO') {
+        if (drinkDate <= currentDate) {
+            drinkDateInput.classList.add('invalid-input')
+            return false;
+        }
+    } else {
+        // drank is yes
+        if (drinkDate > currentDate) {
+            drinkDateInput.classList.add('invalid-input')
+            return true
+        } 
+    }
+    
+    
+    drinkDateInput.classList.remove('invalid-input')
+    return true
+
+
+    
+}
+      
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Set the button to disabled by default
+    document.getElementById('add-wine-submit').disabled = true; 
+
+
+    // Add an event listener for input changes
+    document.getElementById('form-add-wine').addEventListener('input', function () {
+        // Validate each input field based on your criteria
+
+        // Validate bin location
+        var validCellarLocation = isValidCellarLocation();
+        var validOwner = isOwnerValid()
+        var validVintage = isValidVintage()
+        var validVarietals = isValidVarietals()
+        var validEntryDate = isValidEntryDate()
+        var validDrinkDate = isValidDrinkDate()
+
+        // console.log(validCellarLocation)
+
+
+        // console.log(document.getElementById('cellar-input').value)
+        // const input2Valid = document.getElementById('vintage-input').value.trim() !== '';
+
+        // // Enable or disable the submit button based on validation results
+        document.getElementById('add-wine-submit').disabled = !(validCellarLocation && validOwner && validVintage && validVarietals && validEntryDate && validDrinkDate);
+    });
+
+
+
+
+});
 
 
 

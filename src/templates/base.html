@@ -9,7 +9,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-        
+
+        {% block additional_static_files %}{% endblock %}
         
         {% block page_title %}{% endblock %}
     </head>

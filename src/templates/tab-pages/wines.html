@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 
+{% block additional_static_files %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wines.css') }}">
+<script src="{{ url_for('static', filename='js/wines.js') }}"></script>
+{% endblock %}
+
+
 {% block page_title %}
 <title>WINEBASE - Wines</title>
 {% endblock %}
@@ -23,8 +29,6 @@
 
 {% block content %}
 <div id="wines-container">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/wines.css') }}">
-    <script src="{{ url_for('static', filename='js/wines.js') }}"></script>
     <div>
         <!-- This is where the filters and column settings will go -->
     </div>
@@ -66,7 +70,7 @@
     
                         <div class="add-wine-details-form-group">
                             <label for="owner-input">Owner <span class="required-asteriks">&#42;</span></label>
-                            <select class="add-wine-details-form-control-dropdown" id="owner-input" name="owner-input">
+                            <select class="add-wine-details-form-control-dropdown invalid-input" id="owner-input" name="owner-input">
                                 <option value="">-</option>
                                 <option value="SCKR">SCKR</option>
                                 <option value="new-owner">&#43; Add Owner</option>
@@ -100,6 +104,7 @@
                         <div class="add-wine-details-form-group new-owner">
                             <label for="new-owner-color-input">Color <span class="required-asteriks">&#42;</span></label>
                             <select class="add-wine-details-form-control-dropdown new-owner" id="new-owner-color-input" name="new-owner-color-input">
+                                <option value="">-</option>
                                 <option value="blue">blue</option>
                                 <option value="red">red</option>
                                 <option value="green">green</option>
@@ -112,7 +117,7 @@
                             <label for="vintage-input">Vintage <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
-                                class="add-wine-details-form-control"
+                                class="add-wine-details-form-control invalid-input"
                                 id="vintage-input"
                                 name="vintage-input"
                                 placeholder="ex: 2016"
@@ -123,7 +128,7 @@
                             <label for=varietals-input>Varietal(s) <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="text"
-                                class="add-wine-details-form-control"
+                                class="add-wine-details-form-control invalid-input"
                                 id="varietals-input"
                                 name="varietals-input"
                                 placeholder="ex: Syrah"
@@ -178,28 +183,26 @@
                             <label for="entry-date-location-input">Entry Date <span class="required-asteriks">&#42;</span></label>
                             <input
                                 type="date"
-                                class="add-wine-details-form-control .date-input"
+                                class="add-wine-details-form-control invalid-input"
                                 id="entry-date-location-input"
                                 name="entry-date-location-input"
-                            />
-                        </div>
-    
-                        <div class="add-wine-details-form-group">
-                            <label for="drink-date-location-input">Drink Date</label>
-                            <input
-                                type="date"
-                                class="add-wine-details-form-control .date-input"
-                                id="drink-date-location-input"
-                                name="drink-date-location-input"
                             />
                         </div>
                         <div class="add-wine-details-form-group">
                             <label for="drank-input">Drank?</label>
                             <select class="add-wine-details-form-control-dropdown" id="drank-input" name="drank-input">
-                                <option value="">-</option>
-                                <option value="YES">YES</option>
                                 <option value="NO">NO</option>
+                                <option value="YES">YES</option>
                             </select>
+                        </div>
+                        <div class="add-wine-details-form-group">
+                            <label for="drink-date-location-input">Drink Date</label>
+                            <input
+                                type="date"
+                                class="add-wine-details-form-control"
+                                id="drink-date-location-input"
+                                name="drink-date-location-input"
+                            />
                         </div>
                     </div>
                     <div id="add-wine-right-side-div">
