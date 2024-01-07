@@ -5,10 +5,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import func
 
-from .. import db # means from __init__.py
-from ..models import Owner, User, WineDetails, WineEntry, Cellar
+from datetime import datetime
 
-apis = Blueprint('apis', __name__)
+from ... import db # means from __init__.py
+from ...models import Owner, User, WineDetails, WineEntry, Cellar
+
+wines = Blueprint('wines', __name__)
+
+OWNER_COLOR_MAP = {
+    1: 'blue',
+    2: 'red',
+    3: 'green',
+    4: 'orange',
+    5: 'yellow'
+}
+
 
 TABLE_COLUMNS = [
     WineEntry.id,
@@ -50,6 +61,8 @@ def clean_up_date(date):
         return '--'
     return date.strftime("%m/%d/%Y")
 
+
+
 def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
 
     query = (
@@ -63,10 +76,7 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
 
     if filters:
         pass    # handle later 
-
         # query = query.filter(WineDetails.varietals.ilike(f"%cabernet%"))
-
-        
 
     if sortColumnId:
 
@@ -84,8 +94,6 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
                 getattr(order_by_table, order_by_column_name)
             )
     
-
-        
     if offset:
         query = query.offset(offset)
 
@@ -96,9 +104,12 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
 
 
 
+def wines_add_query():
+    pass
 
-@apis.route('/wines', methods=['POST'])
-def get_wines():
+
+@wines.route('/list', methods=['POST'])
+def wine_list():
 
     # Get the JSON payload from the request
     body = request.get_json()
@@ -141,17 +152,107 @@ def get_wines():
     return jsonify(table_date)
 
 
+def create_wine_details(body):
+    wine_details = WineDetails()
+    wine_details.winery_name = body['wineryName']
 
-@apis.route('/add-wine', methods=['POST'])
-def add_wine():
+    if body['wineryLocation'] != '':
+        wine_details.winery_location = body['wineryLocation']
+
+    if body['vineyardLocation'] != '':
+        wine_details.vineyard_location = body['vineyardLocation']
+
+    if body['wineName'] != '':
+        wine_details.wine_name = body['wineName']
+
+    wine_details.varietals = body['varietals']
+    wine_details.vintage = int(body['vintage'])
+
+    if body['expertRaterName'] != '':
+        wine_details.expert_rater_name = body['expertRaterName']
+        wine_details.expert_rating = int(body['expertRating'])
+
+    if body['personalRating'] != '':
+        wine_details.personal_rating = int(body['personalRating'])
+
+    return wine_details
+
+
+
+def create_wine_entry(body, owner, wine_details):
+    wine_entry = WineEntry()
+    wine_entry.entry_date = datetime.strptime(body['entryDate'], "%Y-%m-%d")
+    
+    if body['drinkDate'] != '':
+        wine_entry.drink_date = body['drinkDate']
+
+    wine_entry.drank = True if body['drank'] == 'YES' else False
+
+    if body['purchasePrice'] != '':
+        wine_entry.purchase_price = float(body['purchasePrice'])
+
+    if body['aquisitionInfo'] != '':
+        wine_entry.acquisition_info = body['aquisitionInfo']
+
+    if body['personalNotes'] != '':
+        wine_entry.personal_notes = body['personalNotes']
+
+    if body['cellar'] != '':
+
+        cellar = Cellar.query.filter_by(name=body['cellar']).first()
+        wine_entry.cellar = cellar
+
+        # iterate through cellar wine entries and look for 
+        # any wine entries that contain this same cellar location
+        # and return to form if it exists
+
+        wine_entry.cellar_location = body['binLocation']
+
+    
+    wine_entry.user = current_user
+    wine_entry.owner = owner
+    wine_entry.details = wine_details
+
+    return wine_entry
+
+
+
+
+@wines.route('/add', methods=['POST'])
+def wines_add():
     body = request.get_json()
     print(body)
-    return body
+
+    try:
+
+        if body['owner'] == 'new-owner':
+            # create new owner
+            owner = Owner(
+                        name=body['newOwnerName'], 
+                        initials=body['newOwnerInitials'], 
+                        color_num= int(body['newOwnerColor'])
+                    )
+
+            # check if this user already exists and then return to form if it does already
+            db.session.add(owner)
+        else:
+            owner = Owner.query.filter_by(initials=body['owner']).first()
 
 
-# @apis.route('/validate_wine_form', methods=['POST'])
-# def validate_wine_form():
+        wine_details = create_wine_details(body)
+        db.session.add(wine_details)
 
+        wine_entry = create_wine_entry(body, owner, wine_details)
+        db.session.add(wine_entry)
+
+        db.session.commit()
+
+        # If successful, return a success JSON response
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        # If an exception occurs, return an error JSON response
+        return jsonify({"status": "error", "error_message": str(e)})
 
 
 

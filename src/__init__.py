@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -10,22 +10,24 @@ MYSQL_DB_NAME = 'Winebase'
 
 db = SQLAlchemy()
 
+from .models import User
+from .blueprints.tabs import base_bp, tabs
+from .blueprints.auth import auth
+from .blueprints.apis.wines import wines
+
+
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'blah blah'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_SERVER_HOST}/{MYSQL_DB_NAME}'
     db.init_app(app)
 
-    from .blueprints.tabs import tabs
-    from .blueprints.auth import auth
-    from .blueprints.apis import apis
-    
-    app.register_blueprint(auth, url_prefix='/')
-    app.register_blueprint(apis, url_prefix='/apis/')
+    app.register_blueprint(base_bp, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/auth/')
+    app.register_blueprint(wines, url_prefix='/api/wines/')
     app.register_blueprint(tabs, url_prefix='/tabs/')
     
-
-    from .models import User
 
     with app.app_context():
         db.create_all()

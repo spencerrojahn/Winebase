@@ -1,16 +1,16 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, login_required, logout_user, current_user
-import requests
+from flask import Blueprint, render_template # redirect, url_for, flash, request, jsonify
+from flask_login import login_required, current_user
+# import requests
 
 from .. import db # means from __init__.py
-from ..models import Owner, User, WineDetails, WineEntry, Cellar
-from .auth import auth
-from .apis import apis
+# from ..models import Owner, User, WineDetails, WineEntry, Cellar
+# from .auth import auth
 
+base_bp = Blueprint('base', __name__)
 tabs = Blueprint('tabs', __name__)
 
-@auth.route("/")
-@auth.route("/wines")
+@base_bp.route("/")
+@base_bp.route("/wines")
 @tabs.route("/wines")
 @login_required
 def wines():
@@ -82,7 +82,7 @@ def wines():
     
     return render_template("tab-pages/wines.html", user=current_user, username=current_user.username, tab_name="WINES")
 
-@auth.route("/cellars")
+@base_bp.route("/cellars")
 @tabs.route("/cellars")
 @login_required
 def cellars():

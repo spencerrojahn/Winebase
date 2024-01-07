@@ -295,10 +295,12 @@ input:focus, textarea:focus, select:focus {
 } */
 
 
+a#details-column-sort {
+    pointer-events: none;
+}
 
 
 
-
-input[type="number"] {
+input[type="number"], #purchase-price-input {
     width: 65px;
 }
