@@ -203,11 +203,67 @@ label {
 
 
 
-#add-wine-bottom {
+#add-wine-bottom{
     display: flex;
     justify-content: flex-end;
     /* padding: 5px 0; */
 }
+
+/* #wine-table-footer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+} */
+
+/* tfoot {
+    display: table-header-group;
+} */
+
+#wine-table-footer {
+    display: table-row-group;
+    border: none;
+}
+
+#table-footer-bottom-data {
+    border: none;
+}
+
+#wine-table-footer-div {
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px;
+    align-items: center;
+}
+
+
+
+
+#page-number, #table-showing {
+    margin: 0 5px;
+    /* font-size: 16px; */
+}
+
+.table-nav-buttons {
+    background-color: #eeeeee;
+    border: none;
+    font-size: 20px;
+    font-family: "Exo 2";
+    border-radius: 5px;
+}
+
+.table-nav-buttons:hover {
+    cursor: pointer;
+    background-color: #dddddd;
+}
+
+.table-nav-buttons:disabled {
+    background-color: white;
+    color: #797979;
+    cursor: not-allowed;
+}
+
+
+
 
 #add-wine-submit {
     background-color: #c0c0c0;

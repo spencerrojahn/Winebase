@@ -57,11 +57,38 @@ async function sendWinesAddPostRequest(request_body) {
 }
 
 
+function resetPageArrowsPage() {
+    document.getElementById('page-number').textContent = '1'
+    document.getElementById('prev-table-button').disabled = 'true'
+    // document.getElementById('next-table-button').disabled = 'true'
+}
 
 
-async function populateWinesTable(sortColumnId, sortOrder, filters, offset, limit) {
+
+
+
+
+
+async function populateWinesTable(sortColumnId, sortOrder, filters, fromArrows) {
     // Generate the URL for the internal route with the user parameter
     try {
+
+        // Here is where the data is fetched directly from the filters locations
+        // When apply is hit in filters, simply call this function and filters will be applied (thus, leave filters form poulated until cleared)
+        
+        
+        // can call this function for the next and previous page arrows
+
+        offset = 0
+        limit = 10
+        if (fromArrows) {
+            // change the offset and limit
+        } else {
+            resetPageArrowsPage()
+        }
+
+
+
         const data = await sendWinesListPostRequest(sortColumnId, sortOrder, filters, offset, limit)
         console.log(data)
             
@@ -70,7 +97,7 @@ async function populateWinesTable(sortColumnId, sortOrder, filters, offset, limi
         table_body.innerHTML = ''
     
         // Iterate through the list of lists and create rows
-        data.forEach(list => {
+        data['response'].forEach(list => {
             // Create a new row
     
             var row = table_body.insertRow()
@@ -120,6 +147,27 @@ async function populateWinesTable(sortColumnId, sortOrder, filters, offset, limi
             linkCell.appendChild(link)
     
         })
+
+        // Fix the bottom table footer
+
+        var totalCount = data['totalCount']
+
+
+        var currentPage = document.getElementById('page-number').textContent
+
+        var showingLeft = 1
+        var showingRight = 10
+        if (totalCount <= 10) {
+            showingRight = totalCount
+        } else {
+            // set buttons here and page number (depending on also if sent from arrows or not)
+        }
+             
+
+
+        document.getElementById('table-showing').textContent = 'Showing '+showingLeft+' - '+showingRight+' of '+totalCount
+
+
     } catch (error) {
         console.error('Error in populateWinesTable:', error)
 
@@ -156,13 +204,15 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
         symbol.textContent = '-'
     })
 
+    resetPageArrowsPage()
+
     switch (currentState) {
         case 1:
             // move to state 2 ascending
             sortingSpan.textContent = '\u2191'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, true, null, 0, 25)
+            await populateWinesTable(columnHeaderlink.id, true, null, false)
             
             // send get request for ascending for this given column
 
@@ -172,7 +222,7 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2193'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, false, null, 0, 25)
+            await populateWinesTable(columnHeaderlink.id, false, null, false)
 
             // send get request for desc on this given column
 
@@ -182,7 +232,7 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2191'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, true, null, 0, 25)
+            await populateWinesTable(columnHeaderlink.id, true, null, false)
 
             break
         default:
@@ -271,7 +321,8 @@ async function onPageLoad() {
     // SEND INTITIAL with 'Drink Date' sorting
 
     // Call the function to make the internal API request on page load
-    await populateWinesTable('drink-date-column-sort', true, null, 0, 25)
+    resetPageArrowsPage()
+    await populateWinesTable('drink-date-column-sort', true, null, false)
     // sendWinesGetRequest(null, null, null, 0, 25)
 }
 
@@ -744,7 +795,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('form-add-wine').reset()
 
             // Update the table after adding a new wine
-            await populateWinesTable('drink-date-column-sort', true, null, 0, 25)
+            await populateWinesTable('drink-date-column-sort', true, null, false)
         } catch (error) {
             console.error('Error in adding wine to database:', error)
         }

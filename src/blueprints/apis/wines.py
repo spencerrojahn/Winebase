@@ -20,23 +20,6 @@ OWNER_COLOR_MAP = {
     5: 'yellow'
 }
 
-
-TABLE_COLUMNS = [
-    WineEntry.id,
-    Cellar.name,                    # cellar
-    WineEntry.cellar_location,      # cellar location (bin)
-    Owner.initials,                 # owner
-    WineDetails.vintage,            # vintage
-    WineDetails.varietals,          # varietals
-    WineDetails.wine_name,          # wine name
-    WineDetails.winery_name,        # winery name
-    WineDetails.winery_location,    # winery location
-    WineDetails.vineyard_location,  # vineyard location
-    WineEntry.entry_date,           # entry date
-    WineEntry.drink_date,           # drink date
-    WineEntry.drank                 # drank (true or false)
-]
-
 TABLE_COLUMN_ID_TO_DB_VALUE = {
     'cellar-column-sort': [Cellar, 'name'],   
     'bin-location-column-sort': [WineEntry, 'cellar_location'],   
@@ -65,8 +48,24 @@ def clean_up_date(date):
 
 def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
 
+    data_return_dict = dict()
+
     query = (
-        db.session.query(*TABLE_COLUMNS)
+        db.session.query(*[
+            WineEntry.id,
+            Cellar.name,                    # cellar
+            WineEntry.cellar_location,      # cellar location (bin)
+            Owner.initials,                 # owner
+            WineDetails.vintage,            # vintage
+            WineDetails.varietals,          # varietals
+            WineDetails.wine_name,          # wine name
+            WineDetails.winery_name,        # winery name
+            WineDetails.winery_location,    # winery location
+            WineDetails.vineyard_location,  # vineyard location
+            WineEntry.entry_date,           # entry date
+            WineEntry.drink_date,           # drink date
+            WineEntry.drank                 # drank (true or false)
+        ])
         .select_from(WineEntry)
         .join(WineDetails)
         .join(Owner)
@@ -74,9 +73,26 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
         .filter(WineEntry.user_id == current_user.id)
     )
 
+    # Count query (subquery)
+    count_query = (
+        db.session.query(
+            func.count()
+        )
+        .select_from(WineEntry)
+        .join(WineDetails)
+        .join(Owner)
+        .outerjoin(Cellar, WineEntry.cellar_id == Cellar.id)
+        .filter(WineEntry.user_id == current_user.id)
+    )
+
     if filters:
         pass    # handle later 
         # query = query.filter(WineDetails.varietals.ilike(f"%cabernet%"))
+        # add them to both above queries
+
+    total_count = count_query.scalar()
+    print(total_count)
+    data_return_dict['total_count']= total_count
 
     if sortColumnId:
 
@@ -100,16 +116,17 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
     if limit:
         query = query.limit(limit) 
 
-    return query.all()
 
+    data_return_dict['response'] = query.all()
 
+    return data_return_dict
 
-def wines_add_query():
-    pass
 
 
 @wines.route('/list', methods=['POST'])
 def wine_list():
+
+    response_dict = dict()
 
     # Get the JSON payload from the request
     body = request.get_json()
@@ -130,7 +147,8 @@ def wine_list():
         limit
     )
 
-    table_date = [
+    response_dict['totalCount'] = query_response['total_count']
+    response_dict['response'] = [
         [
             entry.id,
             add_cell(entry.name),   # this is cellar name (just functionality)
@@ -146,10 +164,10 @@ def wine_list():
             clean_up_date(entry.drink_date),
             entry.drank
         ]  
-        for entry in query_response
+        for entry in query_response['response']
     ]
 
-    return jsonify(table_date)
+    return jsonify(response_dict)
 
 
 def create_wine_details(body):
