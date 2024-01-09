@@ -57,36 +57,67 @@ async function sendWinesAddPostRequest(request_body) {
 }
 
 
-function resetPageArrowsPage() {
-    document.getElementById('page-number').textContent = '1'
-    document.getElementById('prev-table-button').disabled = 'true'
-    // document.getElementById('next-table-button').disabled = 'true'
+async function navigatePrevOrNextPage(arrowButtonId) {
+    
+    // Need to get the current sorting
+    // default sorting for drank column in ascending order
+    var sortColumnId = 'drank-column-sort'
+    var sortOrder = true
+
+    var columnHeaders = document.querySelectorAll('.column-header');
+    for (const item of columnHeaders) {
+        var sortingSymbol = item.querySelector('.sorting-symbol');
+        if (sortingSymbol != null) {
+            sortColumnId = item.id;
+
+            // ascending (true)
+            if (sortingSymbol.textContent === '\u2191') {
+                sortOrder = true;
+                break;
+            }
+
+            if (sortingSymbol.textContent === '\u2193') {
+                sortOrder = false;
+                break;
+            }
+        }
+    }
+    await populateWinesTable(sortColumnId, sortOrder, true, arrowButtonId)
+
 }
 
 
-
-
-
-
-
-async function populateWinesTable(sortColumnId, sortOrder, filters, fromArrows) {
+async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButtonId=null) {
     // Generate the URL for the internal route with the user parameter
     try {
 
         // Here is where the data is fetched directly from the filters locations
         // When apply is hit in filters, simply call this function and filters will be applied (thus, leave filters form poulated until cleared)
+        var filters = null
         
-        
-        // can call this function for the next and previous page arrows
+        var offset = 0
+        var limit = 3 // change to 10 for real setup
+        var showingLeft = 1
+        var pageNumber = 1
+        document.getElementById('prev-table-button').disabled = true
 
-        offset = 0
-        limit = 10
         if (fromArrows) {
-            // change the offset and limit
-        } else {
-            resetPageArrowsPage()
+            if (arrowButtonId === 'prev-table-button') {
+                pageNumber = parseInt(document.getElementById('page-number').textContent, 10) - 1
+            } else {
+                pageNumber = parseInt(document.getElementById('page-number').textContent, 10) + 1
+            }
+            offset = (pageNumber - 1) * limit
+            showingLeft = offset + 1
+
+            if (pageNumber === 1) {
+                document.getElementById('prev-table-button').disabled = true
+            } else {
+                document.getElementById('prev-table-button').disabled = false
+            }
         }
 
+        document.getElementById('page-number').textContent = pageNumber.toString()
 
 
         const data = await sendWinesListPostRequest(sortColumnId, sortOrder, filters, offset, limit)
@@ -148,24 +179,24 @@ async function populateWinesTable(sortColumnId, sortOrder, filters, fromArrows) 
     
         })
 
+
+
+
         // Fix the bottom table footer
 
         var totalCount = data['totalCount']
+        var showingRight = offset + limit
+        document.getElementById('next-table-button').disabled = false
 
 
-        var currentPage = document.getElementById('page-number').textContent
-
-        var showingLeft = 1
-        var showingRight = 10
-        if (totalCount <= 10) {
+        if (totalCount <= (offset + limit)) {
             showingRight = totalCount
-        } else {
-            // set buttons here and page number (depending on also if sent from arrows or not)
-        }
+            document.getElementById('next-table-button').disabled = true
+        } 
              
+        const showingString = 'Showing '+showingLeft+' - '+showingRight+' of '+totalCount
 
-
-        document.getElementById('table-showing').textContent = 'Showing '+showingLeft+' - '+showingRight+' of '+totalCount
+        document.getElementById('table-showing').textContent = showingString
 
 
     } catch (error) {
@@ -204,15 +235,13 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
         symbol.textContent = '-'
     })
 
-    resetPageArrowsPage()
-
     switch (currentState) {
         case 1:
             // move to state 2 ascending
             sortingSpan.textContent = '\u2191'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, true, null, false)
+            await populateWinesTable(columnHeaderlink.id, true, false)
             
             // send get request for ascending for this given column
 
@@ -222,7 +251,7 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2193'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, false, null, false)
+            await populateWinesTable(columnHeaderlink.id, false, false)
 
             // send get request for desc on this given column
 
@@ -232,7 +261,7 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
             sortingSpan.textContent = '\u2191'
             columnHeaderlink.style.color = '#797979'
 
-            await populateWinesTable(columnHeaderlink.id, true, null, false)
+            await populateWinesTable(columnHeaderlink.id, true, false)
 
             break
         default:
@@ -321,8 +350,7 @@ async function onPageLoad() {
     // SEND INTITIAL with 'Drink Date' sorting
 
     // Call the function to make the internal API request on page load
-    resetPageArrowsPage()
-    await populateWinesTable('drink-date-column-sort', true, null, false)
+    await populateWinesTable('drink-date-column-sort', true, false)
     // sendWinesGetRequest(null, null, null, 0, 25)
 }
 
@@ -795,7 +823,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('form-add-wine').reset()
 
             // Update the table after adding a new wine
-            await populateWinesTable('drink-date-column-sort', true, null, false)
+            await populateWinesTable('drink-date-column-sort', true, false)
         } catch (error) {
             console.error('Error in adding wine to database:', error)
         }
