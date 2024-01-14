@@ -5,6 +5,11 @@
     padding-left: 20px;
 }
 
+#body-content-header {
+    display: flex;
+    align-items: center;
+}
+
 #add-account:hover {
     color: black;
 }
@@ -48,7 +53,7 @@ span.sorting-symbol {
 
 td {
     border-bottom: 1px solid #dddddd;
-    text-align: left;
+    text-align: center;
     padding: 5px;
 }
 
@@ -228,7 +233,7 @@ label {
     border: none;
 }
 
-#wine-table-footer-div {
+#wine-table-footer-div, #wine-filters {
     display: flex;
     justify-content: flex-end;
     padding: 5px;
@@ -236,6 +241,22 @@ label {
 }
 
 
+#body-content-header-custom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    /* padding: 0; */
+    /* align-self: center; */
+}
+
+.body-content-header-item {
+    /* width: 50%; */
+    padding: 0;
+}
+
+#wine-filters {
+    padding: 0;
+}
 
 
 #page-number, #table-showing {
@@ -359,4 +380,21 @@ a#details-column-sort {
 
 input[type="number"], #purchase-price-input {
     width: 65px;
+}
+
+/* Hide the native checkbox */
+/* input[type="checkbox"] {
+    display: none;
+} */
+
+/* Customize the checkbox container */
+.checkbox-container {
+    display: flex;
+    cursor: pointer;
+    /* align-items: center; */
+}
+
+.checkbox-container, #table-filters {
+    /* padding: 0; */
+    margin: 0 5px;
 }

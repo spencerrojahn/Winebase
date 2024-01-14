@@ -85,7 +85,48 @@ async function navigatePrevOrNextPage(arrowButtonId) {
     await populateWinesTable(sortColumnId, sortOrder, true, arrowButtonId)
 
 }
+async function handleDrankCheckboxChange() {
 
+    const undrankCheckbox = document.getElementById('undrank-checkbox')
+    const drankCheckbox = document.getElementById('drank-checkbox')
+    
+    // disable the checkbox if only one left
+    if (undrankCheckbox.checked && !drankCheckbox.checked) {
+        undrankCheckbox.disabled = true
+    } else if (!undrankCheckbox.checked && drankCheckbox.checked) {
+        drankCheckbox.disabled = true
+    } else {
+        undrankCheckbox.disabled = false
+        drankCheckbox.disabled = false
+    }
+
+
+    // Need to get the current sorting
+    // default sorting for drank column in ascending order
+    var sortColumnId = 'drank-column-sort'
+    var sortOrder = true
+
+    var columnHeaders = document.querySelectorAll('.column-header');
+    for (const item of columnHeaders) {
+        var sortingSymbol = item.querySelector('.sorting-symbol');
+        if (sortingSymbol != null) {
+            sortColumnId = item.id;
+
+            // ascending (true)
+            if (sortingSymbol.textContent === '\u2191') {
+                sortOrder = true;
+                break;
+            }
+
+            if (sortingSymbol.textContent === '\u2193') {
+                sortOrder = false;
+                break;
+            }
+        }
+    }
+    console.log('bob')
+    await populateWinesTable(sortColumnId, sortOrder, false)
+}
 
 async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButtonId=null) {
     // Generate the URL for the internal route with the user parameter
@@ -93,7 +134,13 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
 
         // Here is where the data is fetched directly from the filters locations
         // When apply is hit in filters, simply call this function and filters will be applied (thus, leave filters form poulated until cleared)
-        var filters = null
+        var filters = {}
+
+        const undrankCheckbox = document.getElementById('undrank-checkbox')
+        const drankCheckbox = document.getElementById('drank-checkbox')
+        filters['undrank'] = undrankCheckbox.checked
+        filters['drank'] = drankCheckbox.checked
+
         
         var offset = 0
         var limit = 3 // change to 10 for real setup
@@ -136,7 +183,6 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
             // Set background collor if drank
             if (list[list.length -1] === true) {
                 row.style.backgroundColor = '#eeeeee'
-                
             }
     
             // Iterate through the items in the list and create cells
@@ -147,10 +193,12 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
                     var cell = row.insertCell()
                     // set last row to be in the middle and use check mark
                     if (index === list.length - 1) {
-                        cell.id += 'drank-header'
                         if (item === true) {
+                            cell.id += 'drank-header'
                             cell.textContent = '\u2713'
-                        } 
+                        } else {
+                            cell.textContent = '--'
+                        }
                     } else {
                         // else set the item normally
                         cell.textContent = item
@@ -312,7 +360,12 @@ async function onPageLoad() {
 
         // Create span elements
         var spanColumnName = document.createElement('span')
-        spanColumnName.textContent = columnName
+        if (columnName === 'Drank') {
+            spanColumnName.textContent = 'Drunk'
+        } else {
+            spanColumnName.textContent = columnName
+        }
+        
 
         var sortingSpan = document.createElement('span')
         sortingSpan.id = columnNameId + '-sort-symbol'
@@ -347,8 +400,12 @@ async function onPageLoad() {
         tableHead.appendChild(th)
     })
 
-    // SEND INTITIAL with 'Drink Date' sorting
 
+    // SEND INTITIAL with undrank checkbox as disabled (default)
+    const undrankCheckbox = document.getElementById('undrank-checkbox')
+    undrankCheckbox.disabled = true
+
+    // SEND INTITIAL with 'Drink Date' sorting
     // Call the function to make the internal API request on page load
     await populateWinesTable('drink-date-column-sort', true, false)
     // sendWinesGetRequest(null, null, null, 0, 25)

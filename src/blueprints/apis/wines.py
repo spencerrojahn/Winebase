@@ -86,9 +86,22 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
     )
 
     if filters:
-        pass    # handle later 
+        print(filters)
+
+        # handle undrank vs drank
+        if filters['undrank'] and not filters['drank']:
+            query = query.filter(WineEntry.drank == False)
+            count_query = count_query.filter(WineEntry.drank == False)
+        elif not filters['undrank'] and filters['drank']:
+            query = query.filter(WineEntry.drank == True)
+            count_query = count_query.filter(WineEntry.drank == True)
+
         # query = query.filter(WineDetails.varietals.ilike(f"%cabernet%"))
         # add them to both above queries
+
+
+
+
 
     total_count = count_query.scalar()
     print(total_count)

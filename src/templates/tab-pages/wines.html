@@ -20,18 +20,34 @@
 
 
 {% block body_content_header %}
-<div id="body-content-header-add-account">
-    <a id="add-account" class="header" onclick="handleAddWine()"><span >&#43; ADD WINE</span></a>
+<div id="body-content-header-custom">
+    <div class="body-content-header-item" id="body-content-header-add-account">
+        <a id="add-account" class="header" onclick="handleAddWine()"><span >&#43; ADD WINE</span></a>
+    </div>
+    <div class="body-content-header-item" id="wine-filters">
+        <label class="checkbox-container">
+            <span class="checkbox-label">Undrunk</span>
+            <input id="undrank-checkbox" type="checkbox" name="undrank" checked onchange="handleDrankCheckboxChange()">
+        </label>
+    
+        <label class="checkbox-container">
+            <span class="checkbox-label">Drunk</span>
+            <input id="drank-checkbox" type="checkbox" name="drank" onchange="handleDrankCheckboxChange()">
+        </label>
+        <span id="table-filters">Filters</span>
+    
+        <!-- This is where the filters and column settings will go -->
+    </div>
 </div>
+
+
 {% endblock %}
 
 
 
 {% block content %}
 <div id="wines-container">
-    <div>
-        <!-- This is where the filters and column settings will go -->
-    </div>
+    
     
     <table>
         <thead id="wines-table-head"></thead>
