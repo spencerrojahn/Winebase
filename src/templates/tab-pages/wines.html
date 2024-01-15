@@ -22,16 +22,16 @@
 {% block body_content_header %}
 <div id="body-content-header-custom">
     <div class="body-content-header-item" id="body-content-header-add-account">
-        <a id="add-account" class="header" onclick="handleAddWine()"><span >&#43; ADD WINE</span></a>
+        <a id="add-account" class="header" onclick="showWineForm()"><span >&#43; ADD WINE</span></a>
     </div>
     <div class="body-content-header-item" id="wine-filters">
         <label class="checkbox-container">
-            <span class="checkbox-label">Undrunk</span>
+            <span class="checkbox-label">Unopened</span>
             <input id="undrank-checkbox" type="checkbox" name="undrank" checked onchange="handleDrankCheckboxChange()">
         </label>
     
         <label class="checkbox-container">
-            <span class="checkbox-label">Drunk</span>
+            <span class="checkbox-label">Consumed</span>
             <input id="drank-checkbox" type="checkbox" name="drank" onchange="handleDrankCheckboxChange()">
         </label>
         <span id="table-filters">Filters</span>
@@ -70,11 +70,17 @@
         </tfoot>
     </table>
 
+    
     <div id="popupOverlay" class="overlay">
         <div id="popupContent" class="popup">
             <div id="popupContentHeader">
-                <h2 id="popupContentHeaderTitle">ADD WINE</h2>
-                <button id="closePopupButton" onclick="closeAddWinePopup()">&#10005;</button>
+                <h2 id="popupContentHeaderTitle"></h2>
+                <div id="wine-details-form">
+                    <button class="closePopupButton" id="delete-wine-button"><i class="fa fa-trash" id="trash-can-id"></i></button>
+                    <button class="closePopupButton" id="edit-wine-button" ><i class="fa fa-pencil"></i></button>
+                    <button class="closePopupButton" onclick="closeAddWinePopup()">&#10005;</button>
+                </div>
+                
             </div>
             
             <form id="form-add-wine" method="POST">
@@ -314,7 +320,7 @@
                 </div>
                 
                 <div id="add-wine-bottom">
-                    <button type="reset" id="clear-add-wine" onclick="hideNewOwnerInputFields()">CLEAR</button>
+                    <button type="reset" id="clear-add-wine"></button>
                     <button type="submit" id="add-wine-submit">SUBMIT</button>
                 </div>
                 

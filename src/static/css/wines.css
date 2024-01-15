@@ -68,6 +68,7 @@ td {
 }
 .wine-detail-row-link:hover {
     color: #ab33cf;
+    cursor: pointer;
 }
 
 
@@ -107,16 +108,32 @@ td {
     /* padding: 10px; */
 }
 
-#closePopupButton {
+#wine-details-form {
+    display: flex;
+    align-items: center;
+}
+
+
+.closePopupButton {
     border: none;
     background-color: white;
     font-size: 24px;
+    margin: 0 5px;
 }
 
-#closePopupButton:hover {
+.closePopupButton:hover {
     cursor: pointer;
     color: #999999;
 }
+
+#trash-can-id {
+    color: red;
+}
+
+#delete-wine-button:hover #trash-can-id {
+    color: rgb(143, 0, 0);
+}
+
 
 
 .add-wine-form-container {

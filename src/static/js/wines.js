@@ -214,9 +214,13 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
             // The id contains the WineEntry.id from this given row entry (so that it can be used later
             // on for fetching the details for this given WineEntry)
             link.id = 'wine-detail-row-link_' + list[0]
+
+            link.onclick = function() {
+                showWineDetails(link.id)
+            }
             
             // Set the href attribute to your desired URL
-            link.href = '#'
+            // link.href = '#'
             // Set any other necessary attributes or styles for the link
             link.textContent = 'Details' // Set the link text
     
@@ -319,7 +323,51 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
 }
 
 
-function handleAddWine() {
+// SHOWS THE POPUP FORM FOR ADDING A WINE
+function showWineForm() {
+
+    document.getElementById('popupContentHeaderTitle').textContent = 'ADD WINE'
+
+    document.getElementById('delete-wine-button').style.display = 'none'
+    document.getElementById('edit-wine-button').style.display = 'none'
+
+
+    var clearWineButton = document.getElementById('clear-add-wine')
+    clearWineButton.textContent = 'CLEAR'
+    clearWineButton.onclick = function() {
+        hideNewOwnerInputFields()
+    }
+
+
+    validateAddWineFormFields()
+
+    showWineFormPopup()
+}
+
+
+// SHOWS THE POPUP FORM FOR MODIFYING A WINE or DETAILS
+function showWineDetails(wineEntryId) {
+
+    document.getElementById('popupContentHeaderTitle').textContent = 'WINE DETAILS'
+
+    document.getElementById('delete-wine-button').style.display = ''
+    document.getElementById('edit-wine-button').style.display = ''
+
+    var clearWineButton = document.getElementById('clear-add-wine')
+    clearWineButton.textContent = 'RESET'
+    clearWineButton.onclick = function() {
+        // make API request to get the details again
+    }
+
+    // Only add this validation when the edit button details is clicked
+    validateModifyWineFormFields()
+
+    showWineFormPopup()
+}
+
+
+
+function showWineFormPopup() {
     
     // document.getElementById('entry-date-location-input').value = getToday()
 
@@ -328,6 +376,8 @@ function handleAddWine() {
 }
 
 function closeAddWinePopup() {
+    document.getElementById('form-add-wine').reset()
+    hideNewOwnerInputFields()
     const popupOverlay = document.getElementById('popupOverlay')
     popupOverlay.style.display = 'none'
 }
@@ -361,7 +411,7 @@ async function onPageLoad() {
         // Create span elements
         var spanColumnName = document.createElement('span')
         if (columnName === 'Drank') {
-            spanColumnName.textContent = 'Drunk'
+            spanColumnName.textContent = 'Consumed'
         } else {
             spanColumnName.textContent = columnName
         }
@@ -512,13 +562,43 @@ window.addEventListener('resize', function () {
 })
 
 
+function validateModifyWineFormFields() {
+    document.getElementById('add-wine-submit').disabled = true 
+}
+
 
 // ADD WINE FORM VALIDATIONS
 
-// document.getElementById('bin-location-input').addEventListener('blue', function() {
-//     var inputValue = this.value
+function validateAddWineFormFields() {
+    // Set the button to disabled by default
+    document.getElementById('add-wine-submit').disabled = true 
 
-// })
+
+    // Add an event listener for input changes
+    document.getElementById('form-add-wine').addEventListener('input', function () {
+        // Validate each input field based on your criteria
+
+        // Validate bin location
+        var validCellarLocation = isValidCellarLocation()
+        var validOwner = isOwnerValid()
+        var validVintage = isValidVintage()
+        var validVarietals = isValidVarietals()
+        var validWineryName = isValidWineryName()
+        var validEntryDate = isValidEntryDate()
+        var validDrinkDate = isValidDrinkDate()
+        var validExperRating = validateExpertRating()
+        var validPersonalRating = validatePersonalRating()
+        var validOptionalTextFields = optionalTextFieldsValidation()
+
+        // // Enable or disable the submit button based on validation results
+        document.getElementById('add-wine-submit').disabled = !(validCellarLocation && validOwner 
+                                                                && validVintage && validVarietals 
+                                                                && validWineryName && validOptionalTextFields
+                                                                && validEntryDate && validDrinkDate 
+                                                                && validExperRating && validPersonalRating)
+    })
+}
+
 
 
 function isValidCellarLocation() {
@@ -796,50 +876,12 @@ function validatePersonalRating() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-
-    // Set the button to disabled by default
-    document.getElementById('add-wine-submit').disabled = true 
-
-
-    // Add an event listener for input changes
-    document.getElementById('form-add-wine').addEventListener('input', function () {
-        // Validate each input field based on your criteria
-
-        // Validate bin location
-        var validCellarLocation = isValidCellarLocation()
-        var validOwner = isOwnerValid()
-        var validVintage = isValidVintage()
-        var validVarietals = isValidVarietals()
-        var validWineryName = isValidWineryName()
-        var validEntryDate = isValidEntryDate()
-        var validDrinkDate = isValidDrinkDate()
-        var validExperRating = validateExpertRating()
-        var validPersonalRating = validatePersonalRating()
-        var validOptionalTextFields = optionalTextFieldsValidation()
-
-        // // Enable or disable the submit button based on validation results
-        document.getElementById('add-wine-submit').disabled = !(validCellarLocation && validOwner 
-                                                                && validVintage && validVarietals 
-                                                                && validWineryName && validOptionalTextFields
-                                                                && validEntryDate && validDrinkDate 
-                                                                && validExperRating && validPersonalRating)
-    })
-
-})
-
-document.addEventListener('DOMContentLoaded', function () {
     
     document.getElementById('form-add-wine').addEventListener('submit', async function (submitEvent) {
         
         submitEvent.preventDefault()
         
-        // Get form data
-        // const formData = new FormData(submitEvent.target)
-        // const cellar = formData.get('cellar-input').options[]
-
-        // Make API request
-        
-        // const cellar = document.getElementById('cellar-input').value
+        // do a check here to see if it's an add wine or edit wine submission (or separate out into new functions)
 
         try {
             const request_body = { 
@@ -875,7 +917,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Check if the response is valid or if we get an error for the cellar location
             // not being available
-            hideNewOwnerInputFields()
 
             document.getElementById('form-add-wine').reset()
 
