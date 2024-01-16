@@ -14,6 +14,8 @@ from .models import User
 from .blueprints.tabs import base_bp, tabs
 from .blueprints.auth import auth
 from .blueprints.apis.wines import wines
+from .blueprints.apis.cellars import cellars
+from .blueprints.apis.owners import owners
 
 
 
@@ -26,6 +28,8 @@ def create_app():
     app.register_blueprint(base_bp, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth/')
     app.register_blueprint(wines, url_prefix='/api/wines/')
+    app.register_blueprint(cellars, url_prefix='/api/cellars/')
+    app.register_blueprint(owners, url_prefix='/api/owners/')
     app.register_blueprint(tabs, url_prefix='/tabs/')
     
 

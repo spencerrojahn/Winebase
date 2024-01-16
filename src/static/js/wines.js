@@ -50,7 +50,53 @@ async function sendWinesAddPostRequest(request_body) {
         }
         return await response.json()
     } catch (error) {
-        console.error('Error fetching wines data:', error)
+        console.error('Error adding wine to database:', error)
+        // Throw the error again to propagate it
+        throw error
+    }
+}
+
+async function sendCellarsListGetRequest() {
+    const cellars_get_api_url = "/api/cellars/list"
+
+    // Returning the fetch call directly, it already returns a Promise
+    try {
+        const response = await fetch(cellars_get_api_url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        // Check if the response status is okay
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching cellars data:', error)
+        // Throw the error again to propagate it
+        throw error
+    }
+}
+
+async function sendOwnerListGetRequest() {
+    const owners_get_api_url = "/api/owners/list"
+
+    // Returning the fetch call directly, it already returns a Promise
+    try {
+        const response = await fetch(owners_get_api_url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        // Check if the response status is okay
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching owners data:', error)
         // Throw the error again to propagate it
         throw error
     }
@@ -240,10 +286,12 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
         var showingRight = offset + limit
         document.getElementById('next-table-button').disabled = false
 
-
         if (totalCount <= (offset + limit)) {
             showingRight = totalCount
             document.getElementById('next-table-button').disabled = true
+            if (totalCount === 0) {
+                showingLeft = 0
+            }
         } 
              
         const showingString = 'Showing '+showingLeft+' - '+showingRight+' of '+totalCount
@@ -324,7 +372,40 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
 
 
 // SHOWS THE POPUP FORM FOR ADDING A WINE
-function showWineForm() {
+async function showWineForm() {
+
+    var cellarDropdown = document.getElementById('cellar-input')
+    const cellars = await sendCellarsListGetRequest()
+    console.log(cellars)
+
+    cellarDropdown.innerHTML = '<option value="">-</option>';
+    cellars.forEach(cellar => {
+        var option = document.createElement('option');
+        option.value = cellar.name;
+        option.textContent = cellar.name;
+        cellarDropdown.appendChild(option);
+    })
+
+    
+    var ownerDropdown = document.getElementById('owner-input')
+    const owners = await sendOwnerListGetRequest()
+    console.log(owners)
+
+    ownerDropdown.innerHTML = '<option value="">-</option>';
+    owners.forEach(owner => {
+        var option = document.createElement('option');
+        option.value = owner.initials;
+        option.textContent = owner.initials;
+        ownerDropdown.appendChild(option);
+    })
+
+    var addOwnerOption = document.createElement('option');
+    addOwnerOption.value = 'new-owner';
+    addOwnerOption.textContent = '+ Add Owner';
+    ownerDropdown.appendChild(addOwnerOption);
+
+
+
 
     document.getElementById('popupContentHeaderTitle').textContent = 'ADD WINE'
 

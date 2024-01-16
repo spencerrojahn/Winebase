@@ -1,8 +1,5 @@
-from webbrowser import get
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import aliased
+from flask import Blueprint, request, jsonify
+from flask_login import current_user
 from sqlalchemy.sql import func
 
 from datetime import datetime
@@ -138,6 +135,20 @@ def wines_list_query(sortColumnId, sortOrder, filters, offset, limit):
 
 @wines.route('/list', methods=['POST'])
 def wine_list():
+
+    # cellar = Cellar(name='HOME', height=18, width=9, depth=2, user=current_user)
+    # cellar2 = Cellar(name='APT', height=3, width=6, depth=1, user=current_user)
+    # db.session.add(cellar)
+    # db.session.add(cellar2)
+    # db.session.commit()
+
+    # owner = Owner(name='Spencer', initials='SCKR', color_num=1, user=current_user)
+    # owner1 = Owner(name='Dad', initials='DAD', color_num=2, user=current_user)
+    # db.session.add(owner)
+    # db.session.add(owner1)
+    # db.session.commit()
+
+    
 
     response_dict = dict()
 

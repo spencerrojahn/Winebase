@@ -10,6 +10,12 @@ class User(db.Model, UserMixin):
     # One-to-many relationship with WineEntry
     wine_entries = db.relationship('WineEntry', back_populates='user', passive_deletes=True)
 
+    # One-to-many relationship with Cellar
+    cellars = db.relationship('Cellar', back_populates='user', passive_deletes=True)
+
+    # One-to-many relationship with Owner
+    owners = db.relationship('Owner', back_populates='user', passive_deletes=True)
+
 
 class Owner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +25,10 @@ class Owner(db.Model):
 
     # One-to-many relationship with WineEntry
     wine_entries = db.relationship('WineEntry', back_populates='owner', passive_deletes=True)
+
+    # Foreign key to User
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', back_populates='owners')
 
 
 class WineDetails(db.Model):
@@ -73,4 +83,8 @@ class Cellar(db.Model):
 
     # One-to-many relationship with WineEntry
     wine_entries = db.relationship('WineEntry', back_populates='cellar', passive_deletes=True)
+
+    # Foreign key to User
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', back_populates='cellars')
 
