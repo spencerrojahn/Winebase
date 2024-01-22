@@ -425,6 +425,8 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
 // SHOWS THE POPUP FORM FOR ADDING A WINE
 async function showWineForm() {
 
+    document.getElementById('add-wine-bottom').style.display = 'flex'
+
     var cellarDropdown = document.getElementById('cellar-input')
     const cellars = await sendCellarsListGetRequest()
     console.log(cellars)
@@ -461,6 +463,12 @@ async function showWineForm() {
         element.disabled = false
     })
 
+    // make the inputs on valid
+    var requiredAsteriks = document.querySelectorAll('.required-asteriks')
+    requiredAsteriks.forEach(function (element) {
+        element.style.color = "red"
+    })
+
 
     document.getElementById('popupContentHeaderTitle').textContent = 'ADD WINE'
 
@@ -474,9 +482,8 @@ async function showWineForm() {
         hideNewOwnerInputFields()
     }
 
-
+    hideNewOwnerInputFields()
     validateAddWineFormFields()
-
     showWineFormPopup()
 }
 
@@ -552,18 +559,23 @@ function editWineEntry() {
         disabled = !element.disabled
     })
     
-    wine_form_bottom = document.getElementById('add-wine-bottom')
+    var wine_form_bottom = document.getElementById('add-wine-bottom')
+    var requiredAsteriks = document.querySelectorAll('.required-asteriks')
     if (disabled) {
         wine_form_bottom.style.display = 'flex'
         document.getElementById('edit-wine-button').style.backgroundColor = '#dddddd'
+        requiredAsteriks.forEach(function (element) {
+            element.style.color = "red"
+        })
     } else {
         wine_form_bottom.style.display = 'none'
         document.getElementById('edit-wine-button').style.backgroundColor = ''
+        requiredAsteriks.forEach(function (element) {
+            element.style.color = "white"
+        })
     }
 
     // need to make sure to populate cellars and owners, but with correct one selected
-
-    
 
     validateAddWineFormFields()
 }
@@ -663,14 +675,26 @@ async function showWineDetails(wineEntryId) {
     })
     document.getElementById('add-wine-bottom').style.display = 'none'
 
+
+    var requiredAsteriks = document.querySelectorAll('.required-asteriks')
+    requiredAsteriks.forEach(function (element) {
+        element.style.color = "white"
+    })
+
     await populateWineDetails(wineEntryId)
-
-
 
     var clearWineButton = document.getElementById('clear-add-wine')
     clearWineButton.textContent = 'RESET'
     clearWineButton.onclick = async function() {
         // make API request to get the details again
+
+        var formInputs = document.querySelectorAll('.add-wine-details-form-control, .add-wine-info-form-control, .add-wine-details-form-control-dropdown')
+        formInputs.forEach(function (element) {
+            element.classList.remove('invalid-input')
+        })
+
+        document.getElementById('add-wine-submit').disabled = true 
+
         await populateWineDetails(wineEntryId)
     }
 
@@ -812,7 +836,7 @@ function hideNewOwnerInputFields() {
     document.getElementById('expert-rater-name-input').classList.remove('invalid-input')
     document.getElementById('expert-rating-input').classList.remove('invalid-input')
     document.getElementById('personal-rating-input').classList.remove('invalid-input')
-
+    document.getElementById('drink-date-location-input').classList.remove('invalid-input')
 
     var conditionalElements = document.querySelectorAll('.add-wine-details-form-group.new-owner')
     // Hide the conditional element
@@ -1091,23 +1115,32 @@ function isValidDrinkDate() {
     var drinkDateInput = document.getElementById('drink-date-location-input')
     var drankInput = document.getElementById('drank-input')
 
-    var drinkDate = new Date(drinkDateInput.value)
+    var drinkDate = drinkDateInput.value
 
     // Get the current date
     var currentDate = new Date()
     currentDate.setHours(0, 0, 0, 0)
 
     if (drankInput.value === 'NO') {
-        if (drinkDate <= currentDate) {
-            drinkDateInput.classList.add('invalid-input')
-            return false
-        }
+        if (drinkDate !== '') {
+
+            drinkDate = new Date(drinkDate)
+            if (drinkDate <= currentDate) {
+                drinkDateInput.classList.add('invalid-input')
+                return false
+            }
+        } 
     } else {
         // drank is yes
-        if (drinkDate > currentDate) {
-            drinkDateInput.classList.add('invalid-input')
-            return true
-        } 
+        console.log(drinkDate)
+        if (drinkDate !== '') {
+
+            drinkDate = new Date(drinkDate)
+            if (drinkDate > currentDate) {
+                drinkDateInput.classList.add('invalid-input')
+                return false
+            } 
+        }   
     }
     
     drinkDateInput.classList.remove('invalid-input')
@@ -1199,58 +1232,58 @@ document.addEventListener('DOMContentLoaded', function () {
         
         submitEvent.preventDefault()
 
-        
-        
-        if (document.getElementById('popupContentHeaderTitle').textContent === 'WINE DETAILS') {
-            
-            console.log('edit the wine')
-
-
-        } else {
-            // do a check here to see if it's an add wine or edit wine submission (or separate out into new functions)
-            try {
-                const request_body = { 
-                    cellar: document.getElementById('cellar-input').value,
-                    binLocation: document.getElementById('bin-location-input').value,
-                    owner: document.getElementById('owner-input').value,
-                    newOwnerName: document.getElementById('new-owner-name-input').value,
-                    newOwnerInitials: document.getElementById('new-owner-initials-input').value,
-                    newOwnerColor: document.getElementById('new-owner-color-input').value,
-                    vintage: document.getElementById('vintage-input').value,
-                    varietals: document.getElementById('varietals-input').value,
-                    wineName: document.getElementById('wine-name-input').value,
-                    wineryName: document.getElementById('winery-name-input').value,
-                    wineryLocation: document.getElementById('winery-location-input').value,
-                    vineyardLocation: document.getElementById('vineyard-location-input').value,
-                    entryDate: document.getElementById('entry-date-location-input').value,
-                    drank: document.getElementById('drank-input').value,
-                    drinkDate: document.getElementById('drink-date-location-input').value,
-                    aquisitionInfo: document.getElementById('acquisition-info-input').value,
-                    personalNotes: document.getElementById('personal-notes-input').value,
-                    purchasePrice: document.getElementById('purchase-price-input').value.replace('$', ''),
-                    expertRaterName: document.getElementById('expert-rater-name-input').value,
-                    expertRating: document.getElementById('expert-rating-input').value,
-                    personalRating: document.getElementById('personal-rating-input').value
-                }
-        
-                const data = await sendWinesAddPostRequest(request_body)
-
-                console.log('API Response:', data)
-            } catch (error) {
-                console.error('Error in adding wine to database:', error)
+        try {
+            const request_body = { 
+                cellar: document.getElementById('cellar-input').value,
+                binLocation: document.getElementById('bin-location-input').value,
+                owner: document.getElementById('owner-input').value,
+                newOwnerName: document.getElementById('new-owner-name-input').value,
+                newOwnerInitials: document.getElementById('new-owner-initials-input').value,
+                newOwnerColor: document.getElementById('new-owner-color-input').value,
+                vintage: document.getElementById('vintage-input').value,
+                varietals: document.getElementById('varietals-input').value,
+                wineName: document.getElementById('wine-name-input').value,
+                wineryName: document.getElementById('winery-name-input').value,
+                wineryLocation: document.getElementById('winery-location-input').value,
+                vineyardLocation: document.getElementById('vineyard-location-input').value,
+                entryDate: document.getElementById('entry-date-location-input').value,
+                drank: document.getElementById('drank-input').value,
+                drinkDate: document.getElementById('drink-date-location-input').value,
+                aquisitionInfo: document.getElementById('acquisition-info-input').value,
+                personalNotes: document.getElementById('personal-notes-input').value,
+                purchasePrice: document.getElementById('purchase-price-input').value.replace('$', ''),
+                expertRaterName: document.getElementById('expert-rater-name-input').value,
+                expertRating: document.getElementById('expert-rating-input').value,
+                personalRating: document.getElementById('personal-rating-input').value
             }
-        }
 
-        const popupOverlay = document.getElementById('popupOverlay')
-        popupOverlay.style.display = 'none'
 
-        // Check if the response is valid or if we get an error for the cellar location
-        // not being available
+            if (document.getElementById('popupContentHeaderTitle').textContent === 'WINE DETAILS') {
+            
+                console.log('edit the wine')
+    
+                // edit the wine and then return to wine detail page
+    
+            } else {
+                // do a check here to see if it's an add wine or edit wine submission (or separate out into new functions)
+                const data = await sendWinesAddPostRequest(request_body)
+                console.log('API Response:', data)
 
-        document.getElementById('form-add-wine').reset()
+                const popupOverlay = document.getElementById('popupOverlay')
+                popupOverlay.style.display = 'none'
 
-        // Update the table after adding a new wine
-        await populateWinesTable('drink-date-column-sort', true, false)
+                // Check if the response is valid or if we get an error for the cellar location
+                // not being available
+
+                document.getElementById('form-add-wine').reset()
+
+                // Update the table after adding a new wine
+                await populateWinesTable('drink-date-column-sort', true, false)
+            }
+
+        } catch (error) {
+            console.error('Error in adding/editing wine to database:', error)
+        }       
         
     })
 })
