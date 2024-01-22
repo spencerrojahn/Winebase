@@ -129,6 +129,30 @@ async function sendWinesGetRequest(wineEntryId) {
     }
 }
 
+// Gets singluar wine based on WnieEntry ID
+async function sendWinesDeleteRequest(wineEntryId) {
+    const wines_delete_api_url = "/api/wines/delete/" + wineEntryId
+
+    // Returning the fetch call directly, it already returns a Promise
+    try {
+        const response = await fetch(wines_delete_api_url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        // Check if the response status is okay
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching owners data:', error)
+        // Throw the error again to propagate it
+        throw error
+    }
+}
+
 
 async function navigatePrevOrNextPage(arrowButtonId) {
     
@@ -456,8 +480,63 @@ async function showWineForm() {
     showWineFormPopup()
 }
 
+function cancelWineDetete() {
+    const popupOverlay = document.getElementById('deleteWinePopup')
+    popupOverlay.style.display = 'none'
+}
+
+async function confirmWineDelete(wineEntryId) {
+
+    await sendWinesDeleteRequest(wineEntryId.split('_')[1])
+
+
+    const popupOverlay = document.getElementById('deleteWinePopup')
+    popupOverlay.style.display = 'none'
+
+    document.getElementById('form-add-wine').reset()
+    hideNewOwnerInputFields()
+
+    const popupOverlay2 = document.getElementById('popupOverlay')
+    popupOverlay2.style.display = 'none'
+
+    wineEntryGlobalId = null
+
+    const undrankCheckbox = document.getElementById('undrank-checkbox')
+    undrankCheckbox.disabled = true
+
+    // SEND INTITIAL with 'Drink Date' sorting
+    // Call the function to make the internal API request on page load
+    await populateWinesTable('drink-date-column-sort', true, false)
+
+}
+
 
 function deleteWineEntry() {
+    const popupOverlay = document.getElementById('deleteWinePopup')
+    popupOverlay.style.display = 'flex'
+
+
+    var deleteButtonGroup = document.getElementById('deleteButtonGroup')
+    deleteButtonGroup.innerHTML = ''
+
+    var cancelButton = document.createElement('button')
+    cancelButton.textContent = 'Cancel'
+    cancelButton.id = 'cancel-delete-wine-button'
+    cancelButton.className = 'delete-wine-buttons'
+    cancelButton.onclick = function() {
+        cancelWineDetete()
+    }
+    deleteButtonGroup.appendChild(cancelButton)
+
+    var deleteButton = document.createElement('button')
+    deleteButton.textContent = 'Confirm'
+    deleteButton.id = 'confirm-delete-wine-button'
+    deleteButton.className = 'delete-wine-buttons'
+    deleteButton.onclick = async function() {
+        console.log('delete')
+        await confirmWineDelete(wineEntryGlobalId)
+    }
+    deleteButtonGroup.appendChild(deleteButton)
 
 }
 

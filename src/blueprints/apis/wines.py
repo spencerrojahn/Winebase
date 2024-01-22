@@ -338,6 +338,27 @@ def wines_get(wine_entry_id):
         return jsonify({"status": "error", "error_message": str(e)})
 
 
+# delete singular wine
+@wines.route('/delete/<int:wine_entry_id>', methods=['DELETE'])
+def wines_delete(wine_entry_id):
+
+    try:
+        
+        # delete wine details by id after deleting wine entry (get id first obviously)
+        wine_entry = WineEntry.query.get(wine_entry_id)
+        wine_details_id = wine_entry.details_id
+        db.session.delete(WineDetails.query.get(wine_details_id))
+        db.session.delete(wine_entry)
+        db.session.commit()
+
+        # If successful, return a success JSON response
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        # If an exception occurs, return an error JSON response
+        return jsonify({"status": "error", "error_message": str(e)})
+
+
 # # user = User(username='john_doe')
 
 #                 # Create a wine entry with details

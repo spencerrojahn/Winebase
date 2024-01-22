@@ -73,7 +73,7 @@ td {
 
 
 
-#popupOverlay {
+#popupOverlay, #deleteWinePopup {
     position: fixed;
     top: 0;
     left: 0;
@@ -86,13 +86,54 @@ td {
     z-index: 2; /* Ensure the popup appears above other elements */
 }
 
-#popupContent {
+#deleteWinePopup {
+    z-index: 3;
+}
+
+#deleteButtonGroup {
+    padding: 15px 0;
+    font-size: 16px;
+}
+
+.delete-wine-buttons {
+    padding: 10px 20px;
+    font-family: "Exo 2";
+    border: none;
+    border-radius: 5px;
+}
+
+
+#cancel-delete-wine-button {
+    margin-right: 5px;
+    background-color: white;
+    
+}
+
+#cancel-delete-wine-button:hover {
+    cursor: pointer;
+    background-color: #dddddd;
+}
+
+#confirm-delete-wine-button {
+    margin-left: 5px;
+    background-color: #c0c0c0;
+}
+
+#confirm-delete-wine-button:hover {
+    cursor: pointer;
+    background-color: #999999;
+}
+
+.popupContent {
     background: white;
     padding: 20px 30px;
     border-radius: 10px;
-    width: 60%;
     /* height: 80%; */
     text-align: center;
+}
+
+#popup {
+    width: 60%;
 }
 
 #popupContentHeader {
