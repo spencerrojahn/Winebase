@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+<title>WINEBASE - Owners</title>
+{% endblock %}
+
+
+{% block tabs %}
+<h4 class="tabs"><a class="header" href="{{ url_for('tabs.wines') }}">WINES</a></h4>
+<h4 class="tabs"><a class="header" href="{{ url_for('tabs.cellars') }}">CELLARS</a></h4>
+<h4 class="tabs"><a class="header" href="{{ url_for('tabs.owners') }}" style="color:black">OWNERS</a></h4>
+{% endblock %}
+
+
+
+
+
+{% block content %}
+<div id="owners-container">
+    
+</div>
+
+{% endblock %}

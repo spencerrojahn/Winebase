@@ -297,6 +297,46 @@ def wines_add():
         return jsonify({"status": "error", "error_message": str(e)})
 
 
+# get singular wine
+@wines.route('/get/<int:wine_entry_id>', methods=['GET'])
+def wines_get(wine_entry_id):
+
+    try:
+
+        wine_entry = WineEntry.query.filter_by(id=wine_entry_id).first()
+        print(wine_entry.cellar)
+
+        cellar_name = None
+        if wine_entry.cellar != None:
+            cellar_name = wine_entry.cellar.name
+
+        wine_entry_dict = {
+            'cellar': cellar_name,
+            'cellar_location': wine_entry.cellar_location,
+            'owner': wine_entry.owner.initials,
+            'vintage': wine_entry.details.vintage,
+            'varietals': wine_entry.details.varietals,
+            'wine_name': wine_entry.details.wine_name,
+            'winery_name': wine_entry.details.winery_name,
+            'winery_location': wine_entry.details.winery_location,
+            'vineyard_location': wine_entry.details.vineyard_location,
+            'entry_date': wine_entry.entry_date,
+            'drank': wine_entry.drank,
+            'drink_date': wine_entry.drink_date,
+            'acquisition_info': wine_entry.acquisition_info,
+            'personal_notes': wine_entry.personal_notes,
+            'purchase_price': wine_entry.purchase_price,
+            'expert_rater_name': wine_entry.details.expert_rater_name,
+            'expert_rating': wine_entry.details.expert_rating,
+            'personal_rating': wine_entry.details.personal_rating
+        }
+
+        return (jsonify(wine_entry_dict))
+
+    except Exception as e:
+        # If an exception occurs, return an error JSON response
+        return jsonify({"status": "error", "error_message": str(e)})
+
 
 # # user = User(username='john_doe')
 

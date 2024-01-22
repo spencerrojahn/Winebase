@@ -119,6 +119,7 @@ td {
     background-color: white;
     font-size: 24px;
     margin: 0 5px;
+    border-radius: 5px;
 }
 
 .closePopupButton:hover {
@@ -370,6 +371,10 @@ input:focus, textarea:focus, select:focus {
     border-color: black; /* New border color when in focus */
     outline: none; /* Remove the default blue outline on focus */
     opacity: 1;
+}
+
+input:disabled, textarea:disabled, select:disabled {
+    border: 1px solid #cccccc; 
 }
 
 

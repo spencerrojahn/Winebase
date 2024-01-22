@@ -87,3 +87,11 @@ def wines():
 @login_required
 def cellars():
     return render_template("tab-pages/cellars.html", user=current_user, username=current_user.username, tab_name="CELLARS")
+
+
+@base_bp.route("/owners")
+@tabs.route("/owners")
+@login_required
+def owners():
+    return render_template("tab-pages/owners.html", user=current_user, username=current_user.username, tab_name="OWNERS")
+
