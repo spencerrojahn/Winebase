@@ -78,6 +78,15 @@
         </div>
     </div>
 
+    <div id="cellarLocationTakenPopup">
+        <div class="popupContent">
+            <span>BIN LOCATION TAKEN</span>
+            <br>
+            <span id="cellarLocationTakenSpan"></span>
+            <div id="cellarLocationTakenButtonGroup"></div>
+        </div>
+    </div>
+
 
     <div id="popupOverlay" class="overlay">
         <div class="popupContent" id="popup">
@@ -310,15 +319,15 @@
                             />
                         </div>
                         <div class="add-wine-details-form-group">
-                            <label for="personal-rating-input">Personal Rating (1-5)</label>
+                            <label for="personal-rating-input">Personal Rating (1-10)</label>
                             <input
                                 type="number"
                                 class="add-wine-details-form-control"
                                 id="personal-rating-input"
                                 name="personal-rating-input"
                                 min="1"
-                                max="5"
-                                placeholder="ex: 4"
+                                max="10"
+                                placeholder="ex: 8"
                             />
                         </div>
                     </div>

@@ -47,11 +47,54 @@ async function sendWinesAddPostRequest(request_body) {
             },
             body: JSON.stringify(request_body)
         })
+
+
+
+
         // Check if the response status is okay
-        if (!response.ok) {
-            throw new Error('Network response was not ok')
+        if (response.ok) {
+            return await response.json()
+        } else {
+            switch (response.status) {
+                case 500:
+                    return null
+                default:
+                    return null
+            }
         }
-        return await response.json()
+        
+    } catch (error) {
+        console.error('Error adding wine to database:', error)
+        // Throw the error again to propagate it
+        throw error
+    }
+}
+
+async function sendWinesEditPostRequest(wineEntryId, request_body) {
+    const wines_add_api_url = "/api/wines/edit/" + wineEntryId
+
+    // Returning the fetch call directly, it already returns a Promise
+    try {
+        const response = await fetch(wines_add_api_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request_body)
+        })
+
+        // Check if the response status is okay
+        if (response.ok) {
+            return await response.json()
+        } else {
+            switch (response.status) {
+                case 500:
+                    return null
+                default:
+                    return null
+            }
+        }
+        
     } catch (error) {
         console.error('Error adding wine to database:', error)
         // Throw the error again to propagate it
@@ -548,7 +591,7 @@ function deleteWineEntry() {
 }
 
 
-function editWineEntry() {
+async function editWineEntry() {
     console.log(wineEntryGlobalId)
 
     var formInputs = document.querySelectorAll('.add-wine-details-form-control, .add-wine-info-form-control, .add-wine-details-form-control-dropdown')
@@ -577,6 +620,51 @@ function editWineEntry() {
 
     // need to make sure to populate cellars and owners, but with correct one selected
 
+
+    await populateWineDetails(wineEntryGlobalId)
+
+    var cellarDropdown = document.getElementById('cellar-input')
+    const cellars = await sendCellarsListGetRequest()
+    console.log(cellars)
+    const currentCellar = cellarDropdown.value
+    cellars.forEach(cellar => {
+        var option = document.createElement('option');
+        option.value = cellar.name;
+        option.textContent = cellar.name;
+        if (cellar.name !== currentCellar) {
+            cellarDropdown.appendChild(option);
+        }
+    })
+
+    if (currentCellar !== '') {
+        var option = document.createElement('option');
+        option.value = '';
+        option.textContent = "--";
+        cellarDropdown.appendChild(option);
+    }
+
+
+    var ownerDropdown = document.getElementById('owner-input')
+    const owners = await sendOwnerListGetRequest()
+    console.log(owners)
+    const currentOwnerInitials = ownerDropdown.value
+    owners.forEach(owner => {
+        var option = document.createElement('option');
+        option.value = owner.initials;
+        option.textContent = owner.initials;
+        if (owner.initials !== currentOwnerInitials) {
+            ownerDropdown.appendChild(option);
+        }
+    })
+    var addOwnerOption = document.createElement('option');
+    addOwnerOption.value = 'new-owner';
+    addOwnerOption.textContent = '+ Add Owner';
+    ownerDropdown.appendChild(addOwnerOption);
+    
+    
+
+
+
     validateAddWineFormFields()
 }
 
@@ -585,6 +673,7 @@ async function populateWineDetails(wineEntryId) {
     const wineEntryDetails = await sendWinesGetRequest(wineEntryId.split('_')[1])
 
     var cellarDropdown = document.getElementById('cellar-input')
+    cellarDropdown.innerHTML = ""
     if (wineEntryDetails.cellar === null) {
         cellarDropdown.innerHTML = '<option value="">-</option>'
     } else {
@@ -596,6 +685,7 @@ async function populateWineDetails(wineEntryId) {
     }
 
     var ownerDropdown = document.getElementById('owner-input')
+    ownerDropdown.innerHTML = ''
     ownerDropdown.innerHTML = '<option value="'+wineEntryDetails.owner+'">'+wineEntryDetails.owner+'</option>'
 
     document.getElementById('vintage-input').value = wineEntryDetails.vintage
@@ -696,6 +786,43 @@ async function showWineDetails(wineEntryId) {
         document.getElementById('add-wine-submit').disabled = true 
 
         await populateWineDetails(wineEntryId)
+
+        var cellarDropdown = document.getElementById('cellar-input')
+        const cellars = await sendCellarsListGetRequest()
+        console.log(cellars)
+        const currentCellar = cellarDropdown.value
+        cellars.forEach(cellar => {
+            var option = document.createElement('option');
+            option.value = cellar.name;
+            option.textContent = cellar.name;
+            if (cellar.name !== currentCellar) {
+                cellarDropdown.appendChild(option);
+            }
+        })
+
+        if (currentCellar !== '') {
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = "--";
+            cellarDropdown.appendChild(option);
+        }
+
+        var ownerDropdown = document.getElementById('owner-input')
+        const owners = await sendOwnerListGetRequest()
+        console.log(owners)
+        const currentOwnerInitials = ownerDropdown.value
+        owners.forEach(owner => {
+            var option = document.createElement('option');
+            option.value = owner.initials;
+            option.textContent = owner.initials;
+            if (owner.initials !== currentOwnerInitials) {
+                ownerDropdown.appendChild(option);
+            }
+        })
+        var addOwnerOption = document.createElement('option');
+        addOwnerOption.value = 'new-owner';
+        addOwnerOption.textContent = '+ Add Owner';
+        ownerDropdown.appendChild(addOwnerOption);
     }
 
     // Only add this validation when the edit button details is clicked
@@ -717,7 +844,33 @@ function showWineFormPopup() {
 
 }
 
-function closeAddWinePopup() {
+async function closeAddWinePopup() {
+    // Need to get the current sorting
+    // default sorting for drank column in ascending order
+    var sortColumnId = 'drank-column-sort'
+    var sortOrder = true
+
+    var columnHeaders = document.querySelectorAll('.column-header');
+    for (const item of columnHeaders) {
+        var sortingSymbol = item.querySelector('.sorting-symbol');
+        if (sortingSymbol != null) {
+            sortColumnId = item.id;
+
+            // ascending (true)
+            if (sortingSymbol.textContent === '\u2191') {
+                sortOrder = true;
+                break;
+            }
+
+            if (sortingSymbol.textContent === '\u2193') {
+                sortOrder = false;
+                break;
+            }
+        }
+    }
+    console.log('bob')
+    await populateWinesTable(sortColumnId, sortOrder, false)
+
     document.getElementById('form-add-wine').reset()
     hideNewOwnerInputFields()
     const popupOverlay = document.getElementById('popupOverlay')
@@ -1225,6 +1378,41 @@ function validatePersonalRating() {
     return true
 }
 
+function buttonForCellarLocationTaken() {
+    const popupOverlay = document.getElementById('cellarLocationTakenPopup')
+    popupOverlay.style.display = 'none'
+}
+
+function handleCellarTaken() {
+    
+    const popupOverlay = document.getElementById('cellarLocationTakenPopup')
+    popupOverlay.style.display = 'flex'
+
+    var cellarLocationTakenButtonGroup = document.getElementById('cellarLocationTakenButtonGroup')
+    cellarLocationTakenButtonGroup.innerHTML = ''
+
+    var okButton = document.createElement('button')
+    okButton.textContent = 'OK'
+    okButton.id = 'confirm-delete-wine-button'
+    okButton.className = 'delete-wine-buttons'
+    okButton.onclick = function() {
+        buttonForCellarLocationTaken()
+    }
+    cellarLocationTakenButtonGroup.appendChild(okButton)
+
+
+    const cellar = document.getElementById('cellar-input').value
+    const binLocation = document.getElementById('bin-location-input').value
+    var cellarLocationMissingString = "Cellar: "+cellar+", Bin Location: "+binLocation
+
+    var cellarLocationSpan = document.getElementById("cellarLocationTakenSpan")
+    cellarLocationSpan.textContent = cellarLocationMissingString
+    document.getElementById('bin-location-input').value = ""
+    document.getElementById('bin-location-input').classList.add('invalid-input')
+    document.getElementById('add-wine-submit').disabled = true
+}
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     
@@ -1261,24 +1449,42 @@ document.addEventListener('DOMContentLoaded', function () {
             if (document.getElementById('popupContentHeaderTitle').textContent === 'WINE DETAILS') {
             
                 console.log('edit the wine')
+                console.log(request_body)
     
                 // edit the wine and then return to wine detail page
+                const data = await sendWinesEditPostRequest(wineEntryGlobalId.split('_')[1], request_body)
+
+                if (data === null) {
+                    console.log("bin location taken")
+                    handleCellarTaken()
+                    
+                } 
+
+                showWineDetails(wineEntryGlobalId)
     
             } else {
                 // do a check here to see if it's an add wine or edit wine submission (or separate out into new functions)
                 const data = await sendWinesAddPostRequest(request_body)
-                console.log('API Response:', data)
 
-                const popupOverlay = document.getElementById('popupOverlay')
-                popupOverlay.style.display = 'none'
+                if (data === null) {
+                    console.log("bin location taken")
+                    handleCellarTaken()
 
-                // Check if the response is valid or if we get an error for the cellar location
-                // not being available
+                } else {
 
-                document.getElementById('form-add-wine').reset()
+                    console.log('API Response:', data)
 
-                // Update the table after adding a new wine
-                await populateWinesTable('drink-date-column-sort', true, false)
+                    const popupOverlay = document.getElementById('popupOverlay')
+                    popupOverlay.style.display = 'none'
+    
+                    // Check if the response is valid or if we get an error for the cellar location
+                    // not being available
+    
+                    document.getElementById('form-add-wine').reset()
+    
+                    // Update the table after adding a new wine
+                    await populateWinesTable('drink-date-column-sort', true, false)
+                }
             }
 
         } catch (error) {

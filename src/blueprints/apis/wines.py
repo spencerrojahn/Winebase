@@ -220,6 +220,51 @@ def create_wine_details(body):
     return wine_details
 
 
+def edit_wine_details(body, wine_entry):
+    wine_details = wine_entry.details
+
+    if body['wineryName'] != wine_details.winery_name:
+        wine_details.winery_name = body['wineryName']
+
+    if body['wineryLocation'] != wine_details.winery_location:
+        if body['wineryLocation'] == '':
+            wine_details.winery_location = None
+        else:
+            wine_details.winery_location = body['wineryLocation']
+    
+    if body['vineyardLocation'] != wine_details.vineyard_location:
+        if body['vineyardLocation'] == '':
+            wine_details.vineyard_location = None
+        else:
+            wine_details.vineyard_location = body['vineyardLocation']
+    
+    if body['wineName'] != wine_details.wine_name:
+        if body['wineName'] == '':
+            wine_details.wine_name = None
+        else:
+            wine_details.wine_name = body['wineName']
+    
+    if body['varietals'] != wine_details.varietals:
+        wine_details.varietals = body['varietals']
+    
+    if body['vintage'] != wine_details.vintage:
+        wine_details.vintage = body['vintage']
+    
+    if body['expertRaterName'] != wine_details.expert_rater_name:
+        if body['expertRaterName'] == '':
+            wine_details.expert_rater_name = None
+            wine_details.expert_rating = None
+        else:
+            wine_details.expert_rater_name = body['expertRaterName']
+            wine_details.expert_rating = int(body['expertRating'])
+
+    if body['personalRating'] != wine_details.personal_rating:
+        if body['personalRating'] == '':
+            wine_details.personal_rating = None
+        else:
+            wine_details.personal_rating = int(body['personalRating'])
+
+
 
 def create_wine_entry(body, owner, wine_details):
     wine_entry = WineEntry()
@@ -248,6 +293,13 @@ def create_wine_entry(body, owner, wine_details):
         # any wine entries that contain this same cellar location
         # and return to form if it exists
 
+        cellar_wine_entries = cellar.wine_entries
+        for wine_entry in cellar_wine_entries:
+            if wine_entry.cellar_location == body['binLocation']:
+                return None
+
+
+
         wine_entry.cellar_location = body['binLocation']
 
     
@@ -257,6 +309,62 @@ def create_wine_entry(body, owner, wine_details):
 
     return wine_entry
 
+
+
+def edit_wine_entry(body, owner, wine_entry, wine_entry_id):
+
+    current_owner = wine_entry.owner
+
+    if (current_owner.initials != owner.initials):
+        wine_entry.owner = owner
+
+    if body['drinkDate'] != wine_entry.drink_date:
+        if body['drinkDate'] == '':
+            wine_entry.drink_date = None
+        else:
+            wine_entry.drink_date = body['drinkDate']
+
+    wine_entry.drank = True if body['drank'] == 'YES' else False
+
+    if body['purchasePrice'] != '':
+        wine_entry.purchase_price = float(body['purchasePrice'])
+
+    if body['aquisitionInfo'] != wine_entry.acquisition_info:
+        if body['aquisitionInfo'] == '':
+            wine_entry.acquisition_info = None
+        else:
+            wine_entry.acquisition_info = body['aquisitionInfo']
+
+    if body['personalNotes'] != wine_entry.personal_notes:
+        if body['personalNotes'] == '':
+            wine_entry.personal_notes = None
+        else:
+            wine_entry.personal_notes = body['personalNotes']
+    
+    if wine_entry.cellar != None:
+        if body['cellar'] != wine_entry.cellar.name:
+            if body['cellar'] == '':
+                wine_entry.cellar = None
+            else:
+                cellar = Cellar.query.filter_by(name=body['cellar']).first()
+                wine_entry.cellar = cellar
+    else:
+        if body['cellar'] != '':
+            cellar = Cellar.query.filter_by(name=body['cellar']).first()
+            wine_entry.cellar = cellar
+    
+
+    if body['binLocation'] != wine_entry.cellar_location:
+        if body['binLocation'] == '':
+            wine_entry.cellar_location = None
+        else:
+            cellar_wine_entries = wine_entry.cellar.wine_entries
+            for wine_entry in cellar_wine_entries:
+                if wine_entry.id != wine_entry_id and wine_entry.cellar_location == body['binLocation']:
+                    return False
+            wine_entry.cellar_location = body['binLocation']
+
+    return True
 
 
 
@@ -285,16 +393,66 @@ def wines_add():
         db.session.add(wine_details)
 
         wine_entry = create_wine_entry(body, owner, wine_details)
+        if wine_entry == None:
+            # return bin location taken error
+            return jsonify({"message": "Bin location taken"}), 500
+
         db.session.add(wine_entry)
 
         db.session.commit()
 
         # If successful, return a success JSON response
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success"}), 200
 
     except Exception as e:
         # If an exception occurs, return an error JSON response
         return jsonify({"status": "error", "error_message": str(e)})
+
+
+@wines.route('/edit/<int:wine_entry_id>', methods=['POST'])
+def wines_edit(wine_entry_id):
+    body = request.get_json()
+    # print(body)
+
+    try:
+
+        wine_entry = WineEntry.query.filter_by(id=wine_entry_id).first()
+
+        if body['owner'] == 'new-owner':
+            # create new owner
+            owner = Owner(
+                        name=body['newOwnerName'], 
+                        initials=body['newOwnerInitials'], 
+                        color_num= int(body['newOwnerColor'])
+                    )
+
+            # check if this user already exists and then return to form if it does already
+            db.session.add(owner)
+        else:
+            owner = Owner.query.filter_by(initials=body['owner']).first()
+
+        
+
+        edit_wine_details(body, wine_entry)
+
+
+
+        updated = edit_wine_entry(body, owner, wine_entry, wine_entry_id)
+
+        if updated == False:
+            # return bin location taken error
+            return jsonify({"message": "Bin location taken"}), 500
+
+        db.session.commit()
+
+        # If successful, return a success JSON response
+        return jsonify({"status": "success"}), 200
+
+    except Exception as e:
+        # If an exception occurs, return an error JSON response
+        return jsonify({"status": "error", "error_message": str(e)})
+
+
 
 
 # get singular wine
