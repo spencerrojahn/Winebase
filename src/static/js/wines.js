@@ -283,7 +283,7 @@ async function populateWinesTable(sortColumnId, sortOrder, fromArrows, arrowButt
 
         
         var offset = 0
-        var limit = 3 // change to 10 for real setup
+        var limit = 10  // change to 10 for real setup
         var showingLeft = 1
         var pageNumber = 1
         document.getElementById('prev-table-button').disabled = true
@@ -467,6 +467,8 @@ async function sortingClick(columnHeaderlink, sortingSpan)  {
 
 // SHOWS THE POPUP FORM FOR ADDING A WINE
 async function showWineForm() {
+
+    wineEntryGlobalId = null
 
     document.getElementById('add-wine-bottom').style.display = 'flex'
 
@@ -1370,7 +1372,7 @@ function validateExpertRating() {
 function validatePersonalRating() {
     var personalRatingInput = document.getElementById('personal-rating-input')
 
-    if (personalRatingInput.value !== '' && (personalRatingInput.value > 5 || personalRatingInput.value < 1)) {
+    if (personalRatingInput.value !== '' && (personalRatingInput.value > 10 || personalRatingInput.value < 1)) {
         personalRatingInput.classList.add('invalid-input')
         return false
     } 
@@ -1463,6 +1465,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 showWineDetails(wineEntryGlobalId)
     
             } else {
+
+
+                console.log("spener")
+                console.log(wineEntryGlobalId)
+
+
                 // do a check here to see if it's an add wine or edit wine submission (or separate out into new functions)
                 const data = await sendWinesAddPostRequest(request_body)
 

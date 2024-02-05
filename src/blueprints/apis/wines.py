@@ -294,8 +294,8 @@ def create_wine_entry(body, owner, wine_details):
         # and return to form if it exists
 
         cellar_wine_entries = cellar.wine_entries
-        for wine_entry in cellar_wine_entries:
-            if wine_entry.cellar_location == body['binLocation']:
+        for wine_entry_item in cellar_wine_entries:
+            if wine_entry_item.cellar_location == body['binLocation']:
                 return None
 
 
@@ -306,6 +306,9 @@ def create_wine_entry(body, owner, wine_details):
     wine_entry.user = current_user
     wine_entry.owner = owner
     wine_entry.details = wine_details
+
+    print(wine_entry.id)
+    print(wine_entry.acquisition_info)
 
     return wine_entry
 
@@ -359,8 +362,8 @@ def edit_wine_entry(body, owner, wine_entry, wine_entry_id):
             wine_entry.cellar_location = None
         else:
             cellar_wine_entries = wine_entry.cellar.wine_entries
-            for wine_entry in cellar_wine_entries:
-                if wine_entry.id != wine_entry_id and wine_entry.cellar_location == body['binLocation']:
+            for wine_entry_item in cellar_wine_entries:
+                if wine_entry_item.id != wine_entry_id and wine_entry_item.cellar_location == body['binLocation']:
                     return False
             wine_entry.cellar_location = body['binLocation']
 
